@@ -2,7 +2,7 @@
   <div
     class="h-screen w-screen bg-gray-100 overflow-hidden flex justify-center items-center"
   >
-    <button
+    <div
       type="button"
       class="inline-flex items-center px-8 py-4 font-semibold leading-6 text-sm rounded-md text-white bg-indigo-500 hover:bg-indigo-400 transition ease-in-out duration-150 cursor-not-allowed"
       disabled
@@ -29,6 +29,6 @@
       </svg>
 
       Loading...
-    </button>
+    </div>
   </div>
 </template>

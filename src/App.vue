@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="h-full w-full overflow-hidden">
+  <div id="app" class="h-screen w-full overflow-hidden">
     <router-view v-if="isLoaded"></router-view>
     <div v-else>
       <Loading />

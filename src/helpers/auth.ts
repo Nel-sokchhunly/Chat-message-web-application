@@ -1,5 +1,5 @@
 import { usePocketBaseStore } from '../store/pocketbase';
-import { LoginForm } from '../types/auth';
+import { LoginForm, SignupForm } from '../types/auth';
 
 function init() {
   const pocketbaseStore = usePocketBaseStore();
@@ -15,9 +15,20 @@ export async function Login({ email, password }: LoginForm) {
   try {
     await pb.collection('users').authWithPassword(email, password);
   } catch (err) {
-    console.log('====================================');
-    console.log(err);
-    console.log('====================================');
+    return err;
+  }
+}
+
+export async function Signup(formData: SignupForm) {
+  try {
+    const { pb } = init();
+
+    await pb.collection('users').create(formData);
+    await pb
+      .collection('users')
+      .authWithPassword(formData.email, formData.password);
+  } catch (err) {
+    return err;
   }
 }
 

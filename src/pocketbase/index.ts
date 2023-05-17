@@ -1,7 +1,6 @@
 import PocketBase from 'pocketbase';
 import { useUserStore } from '../store/user';
 import { usePocketBaseStore } from '../store/pocketbase';
-import { useRouter } from 'vue-router';
 
 export default function initPocketBase() {
   const userStore = useUserStore();
@@ -12,6 +11,8 @@ export default function initPocketBase() {
   pocketbaseStore.$patch({
     pocketbase: pb
   });
+
+  userStore.$state.authStore = pb.authStore;
 
   pb.authStore.onChange(() => {
     userStore.$state.authStore = pb.authStore;
