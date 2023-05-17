@@ -6,7 +6,7 @@ import './style.css';
 import App from './App.vue';
 
 // router
-import routes from './router';
+import { routes } from './router/routes';
 const router = createRouter({
   // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
   history: createWebHistory(),
