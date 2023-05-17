@@ -14,6 +14,10 @@ export async function Login({ email, password }: LoginForm) {
 
   try {
     await pb.collection('users').authWithPassword(email, password);
+
+    return {
+      isSuccess: true
+    };
   } catch (err) {
     return err;
   }
@@ -27,6 +31,10 @@ export async function Signup(formData: SignupForm) {
     await pb
       .collection('users')
       .authWithPassword(formData.email, formData.password);
+
+    return {
+      isSuccess: true
+    };
   } catch (err) {
     return err;
   }

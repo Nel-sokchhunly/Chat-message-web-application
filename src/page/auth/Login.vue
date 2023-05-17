@@ -20,6 +20,7 @@
       }"
     >
       <FormKit
+        :disabled="isRequestingApi"
         type="text"
         label="Email"
         v-model="email"
@@ -44,6 +45,7 @@
         }"
       />
       <FormKit
+        :disabled="isRequestingApi"
         type="password"
         label="Password"
         min="8"
@@ -107,6 +109,14 @@
           </div></span
         >
       </button>
+
+      <!-- error message -->
+      <div
+        v-if="errorsMessages !== ''"
+        class="mt-4 text-sm text-red-600 whitespace-pre-wrap text-center"
+      >
+        {{ errorsMessages }}
+      </div>
     </FormKit>
     <!-- signup form -->
     <FormKit
@@ -122,6 +132,7 @@
     >
       <!-- email -->
       <FormKit
+        :disabled="isRequestingApi"
         type="text"
         label="Email"
         v-model="email"
@@ -148,6 +159,7 @@
 
       <!-- password -->
       <FormKit
+        :disabled="isRequestingApi"
         type="password"
         label="Password"
         name="password"
@@ -155,12 +167,7 @@
         max="20"
         v-model="password"
         placeholder="enter your password"
-        validation="required|length:8,20"
         validation-visibility="blur"
-        :validation-messages="{
-          matches:
-            'Password must contain at least one number, one uppercase,\n one lowercase, and one special character'
-        }"
         :classes="{
           outer: 'mb-5 w-[300px]',
           label: 'block mb-1 font-bold text-sm',
@@ -174,6 +181,7 @@
       />
       <!-- confirm password -->
       <FormKit
+        :disabled="isRequestingApi"
         type="password"
         label="Confirm Password"
         name="password_confirm"
@@ -233,6 +241,14 @@
           </div></span
         >
       </button>
+
+      <!-- error message -->
+      <div
+        v-if="errorsMessages !== ''"
+        class="mt-4 text-sm text-red-600 whitespace-pre-wrap text-center"
+      >
+        {{ errorsMessages }}
+      </div>
     </FormKit>
 
     <!-- switch form -->
@@ -270,6 +286,8 @@ const password = ref<string>('');
 
 const isRequestingApi = ref(false);
 
+const errorsMessages = ref<string>('');
+
 const handleSwitchingFormState = (state: FormState) => {
   email.value = '';
   password.value = '';
@@ -279,17 +297,27 @@ const handleSwitchingFormState = (state: FormState) => {
 
 const handleLogin = async () => {
   if (!email && !password) return;
+  errorsMessages.value = '';
 
   isRequestingApi.value = true;
 
-  await Login({
+  const result: any = await Login({
     email: email.value as string,
     password: password.value as string
   });
+
+  // if result is true, mean the signup has completed
+  if (!result.isSuccess) {
+    errorsMessages.value = result.data.message;
+  }
+
+  isRequestingApi.value = false;
 };
 
 const handleSignup = async () => {
   if (!email && !password) return;
+  errorsMessages.value = '';
+
   isRequestingApi.value = true;
 
   const username = email.value.substring(0, email.value.lastIndexOf('@'));
@@ -303,9 +331,19 @@ const handleSignup = async () => {
 
   const result: any = await Signup(formData);
 
-  console.log('====================================');
-  console.log(result);
-  console.log('====================================');
+  // if result is true, mean the signup has completed
+  if (!result.isSuccess) {
+    const messagesList = result.data.data;
+    delete messagesList['username'];
+
+    let errors: string[] = [];
+
+    Object.keys(messagesList).forEach((key: any) => {
+      errors.push(messagesList[key].message);
+    });
+
+    errorsMessages.value = errors.join('\n');
+  }
 
   isRequestingApi.value = false;
 };
