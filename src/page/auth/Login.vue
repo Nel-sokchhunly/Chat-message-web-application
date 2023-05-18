@@ -26,8 +26,8 @@
         v-model="email"
         placeholder="enter your kit email"
         :validation="[
-          ['required'],
-          ['matches', /^[A-Za-z0-9._%+-]+@kit\.edu\.kh$/]
+          ['required']
+          // ['matches', /^[A-Za-z0-9._%+-]+@kit\.edu\.kh$/]
         ]"
         validation-visibility="blur"
         :validation-messages="{
@@ -138,8 +138,8 @@
         v-model="email"
         placeholder="enter your kit email"
         :validation="[
-          ['required'],
-          ['matches', /^[A-Za-z0-9._%+-]+@kit\.edu\.kh$/]
+          ['required']
+          // ['matches', /^[A-Za-z0-9._%+-]+@kit\.edu\.kh$/]
         ]"
         validation-visibility="blur"
         :validation-messages="{

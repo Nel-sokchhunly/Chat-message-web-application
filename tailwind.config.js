@@ -25,7 +25,11 @@ export default {
       'alt-primary': '#5FDFFA',
       secondary: '#88E8B7'
     },
-    extend: {}
+    extend: {
+      transitionProperty: {
+        multiple: 'width , height , backgroundColor , border-radius'
+      }
+    }
   },
   plugins: []
 };

@@ -1,27 +1,64 @@
 <template>
-  <div>Homepage</div>
-  <img src="https://ui-avatars.com/api/?name=sokchunly+nel" />
-  <button @click="handleLogout" class="bg-red-100 p-2 rounded">Logout</button>
+  <div class="h-full relative">
+    <Navbar />
+
+    <div class="h-full">
+      <DirectMessage v-if="selected === 1" />
+      <GroupMessage v-if="selected === 2" />
+      <UserProfile v-if="selected === 3" />
+    </div>
+
+    <BottomNav
+      :selected="selected"
+      :options="options"
+      :onchange="(id: Number) => selected = id"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
-// import { useRouter } from 'vue-router';
-import { onMounted } from 'vue';
-import { Logout } from '../helpers/auth';
-import { useUserStore } from '../store/user';
+import { ref } from 'vue';
 
-// const router = useRouter();
+import Navbar from '../layout/Navbar.vue';
+import BottomNav from '../layout/BottomNav.vue';
 
-const userStore = useUserStore();
+import DirectMessage from './tabs/DirectMessage.vue';
+import GroupMessage from './tabs/GroupMessage.vue';
+import UserProfile from './tabs/UserProfile.vue';
 
-onMounted(() => {
-  console.log('====================================');
-  console.log(userStore.authStore.model);
-  console.log('====================================');
-});
-
-function handleLogout() {
-  Logout();
-  // router.push({ name: 'auth' });
-}
+const selected = ref<any>(1);
+const options = [
+  {
+    id: 1,
+    title: 'Direct',
+    icon: 'icon/direct-message.svg',
+    color: 'bg-secondary'
+  },
+  {
+    id: 2,
+    icon: 'icon/group-message.svg',
+    title: 'Group',
+    color: 'bg-secondary'
+  },
+  {
+    id: 3,
+    icon: 'icon/user.svg',
+    title: 'Profile',
+    color: 'bg-secondary'
+  }
+];
 </script>
+
+<style>
+.sm-btn-container-foreground {
+  background-color: inherit !important;
+  height: inherit !important;
+  width: inherit !important;
+  box-shadow: none !important;
+}
+
+.sm-btn-icon > img {
+  height: 32px !important;
+  width: 32px !important;
+}
+</style>
