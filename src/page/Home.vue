@@ -5,7 +5,8 @@
     <div class="h-full">
       <DirectMessage v-if="selected === 1" />
       <GroupMessage v-if="selected === 2" />
-      <UserProfile v-if="selected === 3" />
+      <UserList v-if="selected === 3" />
+      <UserProfile v-if="selected === 4" />
     </div>
 
     <BottomNav
@@ -24,6 +25,7 @@ import BottomNav from '../layout/BottomNav.vue';
 
 import DirectMessage from './tabs/DirectMessage.vue';
 import GroupMessage from './tabs/GroupMessage.vue';
+import UserList from './tabs/UserList.vue';
 import UserProfile from './tabs/UserProfile.vue';
 
 const selected = ref<any>(1);
@@ -32,19 +34,29 @@ const options = [
     id: 1,
     title: 'Direct',
     icon: 'icon/direct-message.svg',
-    color: 'bg-secondary'
+    bgColor: 'bg-secondary',
+    textColor: 'text-primary'
   },
   {
     id: 2,
     icon: 'icon/group-message.svg',
     title: 'Group',
-    color: 'bg-secondary'
+    bgColor: 'bg-secondary',
+    textColor: 'text-primary'
   },
   {
     id: 3,
+    icon: 'icon/user-list.svg',
+    title: 'Users',
+    bgColor: 'bg-secondary',
+    textColor: 'text-primary'
+  },
+  {
+    id: 4,
     icon: 'icon/user.svg',
     title: 'Profile',
-    color: 'bg-secondary'
+    bgColor: 'bg-secondary',
+    textColor: 'text-primary'
   }
 ];
 </script>
