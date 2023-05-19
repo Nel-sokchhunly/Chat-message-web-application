@@ -1,9 +1,7 @@
 <template>
-  <div
-    class="absolute bottom-0 left-0 h-fit w-screen flex justify-center items-center"
-  >
+  <div class="fixed bottom-0 h-fit w-screen flex justify-center items-center">
     <div
-      class="w-screen md:w-1/2 xl:w-1/3 px-4 py-2 flex flex-grow-1 justify-center items-center space-x-4"
+      class="w-screen md:w-1/2 p-4 flex flex-grow-1 justify-center items-center space-x-4"
     >
       <button
         v-for="button in options"

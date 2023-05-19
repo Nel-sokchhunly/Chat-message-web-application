@@ -1,8 +1,8 @@
 <template>
-  <div class="h-full relative">
+  <div class="flex-1 relative flex justify-center">
     <Navbar />
 
-    <div class="h-full">
+    <div class="w-screen md:w-1/2 fixed top-20 p-4">
       <DirectMessage v-if="selected === 1" />
       <GroupMessage v-if="selected === 2" />
       <UserList v-if="selected === 3" />
@@ -27,6 +27,10 @@ import DirectMessage from './tabs/DirectMessage.vue';
 import GroupMessage from './tabs/GroupMessage.vue';
 import UserList from './tabs/UserList.vue';
 import UserProfile from './tabs/UserProfile.vue';
+import { onBeforeMount } from 'vue';
+import { usePocketBaseStore } from '../store/pocketbase';
+import { useUserStore } from '../store/user';
+import { getAllDirectMessage } from '../helpers/pocketbase';
 
 const selected = ref<any>(1);
 const options = [
@@ -59,6 +63,32 @@ const options = [
     textColor: 'text-primary'
   }
 ];
+
+const pb = usePocketBaseStore();
+const userStore = useUserStore();
+
+onBeforeMount(async () => {
+  // get all users list
+  const users = await pb.pocketbase.collection('users').getFullList({
+    filter: `id!='${pb.pocketbase.authStore.model?.id}'`
+  });
+
+  const userList: any = [];
+  users.forEach((user: any) => {
+    userList.push({
+      ...user
+    });
+  });
+
+  userStore.$state.usersList = userList;
+
+  // get all direct message
+  const directMessage = await getAllDirectMessage(pb.pocketbase);
+
+  userStore.$state.directMessage = directMessage;
+
+  userStore.$state.isFetchingFinished = true;
+});
 </script>
 
 <style>

@@ -1,20 +1,32 @@
 <template>
-  <div class="p-2 px-4 pt-4 sticky top-0 left-0">
-    <div class="flex space-x-4 items-center">
-      <div class="w-12 h-12 rounded-full">
-        <identicon-svg
-          class="block"
-          :username="userStore.userModel.username"
-          saturation="50"
-        ></identicon-svg>
+  <div class="fixed top-0 h-fit w-screen flex justify-center items-center">
+    <div
+      class="h-20 w-screen md:w-1/2 p-2 px-4 pt-4 flex items-center justify-between"
+    >
+      <div class="flex space-x-4 items-center">
+        <div class="w-12 h-12 rounded-lg border-2">
+          <identicon-svg
+            class="block"
+            :username="userStore.userModel.username"
+            saturation="50"
+          ></identicon-svg>
+        </div>
+        <div>{{ userStore.userModel.username }}</div>
       </div>
-      <div>{{ userStore.userModel.username }}</div>
+
+      <button
+        class="bg-secondary bg-opacity-40 rounded-full p-2 px-4 text-primary font-bold"
+        @click="Logout"
+      >
+        logout
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useUserStore } from '../store/user';
+import { Logout } from '../helpers/auth';
 
 const userStore = useUserStore();
 </script>

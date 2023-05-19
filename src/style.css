@@ -16,4 +16,11 @@
   -webkit-text-size-adjust: 100%;
 
   --fk-max-width-input: none;
+
+  -webkit-tap-highlight-color: transparent;
 }
+
+/* * {
+  border: red dotted 1px;
+  box-sizing: content-box;
+} */

@@ -1,5 +1,8 @@
 <template>
-  <div id="app" class="h-screen w-full overflow-hidden">
+  <div
+    id="app"
+    class="h-screen w-full flex flex-col flex-grow-1 overflow-hidden relative"
+  >
     <router-view v-if="isLoaded"></router-view>
     <div v-else>
       <Loading />
@@ -20,8 +23,8 @@ const userStore = useUserStore();
 
 const isLoaded = ref<Boolean>(false);
 
-onMounted(() => {
-  const { isLoggedIn } = initPocketBase();
+onMounted(async () => {
+  const { isLoggedIn } = await initPocketBase();
 
   if (!isLoggedIn) {
     router.replace({ name: 'auth' });

@@ -326,7 +326,8 @@ const handleSignup = async () => {
     username,
     email: email.value,
     password: password.value,
-    passwordConfirm: password.value
+    passwordConfirm: password.value,
+    emailVisibility: true
   };
 
   const result: any = await Signup(formData);

@@ -1,5 +1,6 @@
 import Login from '../page/auth/Login.vue';
 import Home from '../page/Home.vue';
+import Chat from '../page/Chat.vue';
 
 import { useRouter } from 'vue-router';
 
@@ -13,20 +14,10 @@ export const routes = [
     name: 'auth',
     path: '/auth',
     component: Login
+  },
+  {
+    name: 'direct',
+    path: '/direct/:id',
+    component: Chat
   }
 ];
-
-export function routerGuard(isLoggedIn: boolean) {
-  const router = useRouter();
-  router.beforeResolve((to) => {
-    if (isLoggedIn && to.name === 'auth') {
-      return { name: 'home' };
-    }
-
-    if (!isLoggedIn && to.name !== 'auth') {
-      return { name: 'auth' };
-    }
-
-    return true;
-  });
-}
