@@ -67,6 +67,8 @@ const options = [
 const pb = usePocketBaseStore();
 const userStore = useUserStore();
 
+// const directMessageLocalStorage = ref<DirectChatInfo[]>();
+
 onBeforeMount(async () => {
   // get all users list
   const users = await pb.pocketbase.collection('users').getFullList({
@@ -88,6 +90,20 @@ onBeforeMount(async () => {
   userStore.$state.directMessage = directMessage;
 
   userStore.$state.isFetchingFinished = true;
+
+  // subscribe to all direct message
+  await pb.pocketbase
+    .collection('direct_chat_info')
+    .subscribe('*', (e: any) => {
+      if (e.record.members.includes(userStore.userModel.id)) {
+        // userStore.$state.directMessage[e.record.id] = e.record;
+        userStore.$state.directMessage.forEach((direct, index) => {
+          if (direct.id === e.record.id) {
+            userStore.$state.directMessage[index] = e.record;
+          }
+        });
+      }
+    });
 });
 </script>
 

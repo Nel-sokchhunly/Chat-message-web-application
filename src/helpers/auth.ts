@@ -1,4 +1,3 @@
-import { useRouter } from 'vue-router';
 import { initPbClient } from '../pocketbase';
 import { LoginForm, SignupForm } from '../types/auth';
 
@@ -41,6 +40,8 @@ export async function Signup(formData: SignupForm) {
 
 export function Logout() {
   const { pb } = initPbClient();
+
+  localStorage.removeItem('direct_message');
 
   pb.authStore.clear();
 }

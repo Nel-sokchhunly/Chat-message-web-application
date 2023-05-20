@@ -19,10 +19,12 @@ export async function getDirectMessage(fromId: string, toId: string) {
     // if not, create a new one
     const formData: DirectChatInfo = {
       members: [fromId, toId],
-      unique_ids: `${fromId}_${toId}`,
+      type: 'direct',
       messages_object: {
         message_list: []
-      }
+      },
+      unseen_message: {},
+      unique_ids: fromId + '_' + toId
     };
 
     // create record in direct_chat_info

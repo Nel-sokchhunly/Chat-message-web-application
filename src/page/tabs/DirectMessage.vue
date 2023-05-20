@@ -1,21 +1,68 @@
 <template>
-  <div v-for="chat in userStore.allDirectMessageUser" :key="chat.id">
-    <button
-      @click="handleOpenDirectMessage(chat.chatId)"
-      class="flex items-center border-2 w-full mb-4 rounded-lg"
-    >
-      <div class="w-12 h-12 rounded-full">
-        <identicon-svg
-          class="block"
-          :username="chat.memberObj.username"
-          saturation="50"
-        ></identicon-svg>
-      </div>
-      <h1>{{ chat.memberObj.username }}</h1>
-    </button>
-  </div>
   <div class="h-full" v-if="!userStore.isFetchingFinished">
     <Loading />
+  </div>
+
+  <div v-else>
+    <!-- unseen section -->
+    <div
+      v-if="userStore.allDirectMessageUser.unseen.length > 0"
+      class="text-sm text-black text-opacity-50 mb-4"
+    >
+      Unseen messages
+    </div>
+    <div v-for="chat in userStore.allDirectMessageUser.unseen" :key="chat.id">
+      <button
+        @click="handleOpenDirectMessage(chat.chatId)"
+        class="flex flex-grow items-center border-2 w-full mb-4 rounded-lg"
+      >
+        <div class="w-12 h-12 rounded-full">
+          <identicon-svg
+            class="block"
+            :username="chat.memberObj.username"
+            saturation="50"
+          ></identicon-svg>
+        </div>
+        <h1>{{ chat.memberObj.username }}</h1>
+        <div class="flex-1"></div>
+        <h1
+          v-if="chat.unseen && chat.unseen > 0"
+          class="text-white bg-red-600 rounded-lg h-6 w-6 flex justify-center items-center px-1 mr-4"
+        >
+          {{ chat.unseen }}
+        </h1>
+      </button>
+    </div>
+
+    <!-- seen section -->
+    <div
+      v-if="userStore.allDirectMessageUser.seen.length > 0"
+      class="text-sm text-black text-opacity-50 mb-4"
+    >
+      messages
+    </div>
+    <div v-for="chat in userStore.allDirectMessageUser.seen" :key="chat.id">
+      <button
+        @click="handleOpenDirectMessage(chat.chatId)"
+        class="flex flex-grow items-center border-2 w-full mb-4 rounded-lg"
+      >
+        <div class="w-12 h-12 rounded-full">
+          <identicon-svg
+            class="block"
+            :username="chat.memberObj.username"
+            saturation="50"
+          ></identicon-svg>
+        </div>
+        <h1>{{ chat.memberObj.username }}</h1>
+        <div class="flex-1"></div>
+        <h1
+          v-if="chat.unseen && chat.unseen > 0"
+          class="text-white bg-red-600 rounded-lg h-6 w-6 flex justify-center items-center px-1 mr-4"
+        >
+          {{ chat.unseen }}
+        </h1>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -44,5 +91,9 @@ onMounted(async () => {
   const directMessage = await getAllDirectMessage(pb);
 
   userStore.$state.directMessage = directMessage;
+
+  console.log('====================================');
+  console.log(userStore.allDirectMessageUser);
+  console.log('====================================');
 });
 </script>

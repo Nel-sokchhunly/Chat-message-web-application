@@ -13,7 +13,10 @@ export const useUserStore = defineStore('user', {
     userModel: (state) => state.authStore.model,
     allDirectMessageUser: (state) => {
       const selfId = state.authStore.model.id;
-      const directMessageList: any = [];
+      const directMessages: any = {
+        unseen: [],
+        seen: []
+      };
 
       if (state.directMessage.length === 0) return [];
 
@@ -22,16 +25,23 @@ export const useUserStore = defineStore('user', {
 
         const memberObj = state.usersList.find((user) => user.id === memberId);
 
+        let unseenAmount = chat.unseen_message[selfId] ?? 0;
+
         const data = {
           chatId: chat.id,
           memberId,
-          memberObj
+          memberObj,
+          unseen: unseenAmount
         };
 
-        directMessageList.push(data);
+        if (unseenAmount > 0) {
+          directMessages.unseen.push(data);
+        } else {
+          directMessages.seen.push(data);
+        }
       });
 
-      return directMessageList;
+      return directMessages;
     }
   }
 });

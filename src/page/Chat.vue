@@ -1,13 +1,15 @@
 <template>
   <div
-    v-if="record"
+    v-if="record && oppositeUser && userStore.userModel"
     class="relative flex flex-col flex-grow justify-center items-center"
   >
     <ChatNavbar :username="oppositeUser?.username" />
     <div class="fixed bottom-0 h-screen w-screen md:w-1/2 py-20 overflow-clip">
       <ChatMessages
-        :userId="userStore.userModel.id"
-        :messages="sortedMessages as MessageObject[]"
+        :chat-type="record.type"
+        :sender-user="userStore.userModel"
+        :receiver-user="(oppositeUser as UserInfo)"
+        :messages="(sortedMessages as MessageObject[])"
       />
     </div>
     <ChatInput :onSendChat="onSendChat" />
@@ -53,10 +55,23 @@ const onSendChat = async (text: string) => {
     }
   ];
 
+  let unseen_message: any = {};
+  if (record.value.unseen_message) {
+    const receiverId = oppositeUser.value?.id as string;
+    let unseenAmount = record.value.unseen_message[receiverId] ?? 0;
+
+    unseen_message = {
+      ...record.value.unseen_message
+    };
+
+    unseen_message[receiverId] = unseenAmount += 1;
+  }
+
   await pb.collection('direct_chat_info').update(chatId, {
     messages_object: {
       message_list: sendMessage
-    }
+    },
+    unseen_message
   });
 };
 
@@ -101,7 +116,18 @@ onMounted(async () => {
   );
 });
 
-onBeforeUnmount(
-  async () => await pb.collection('direct_chat_info').unsubscribe(chatId)
-);
+onBeforeUnmount(async () => {
+  await pb.collection('direct_chat_info').unsubscribe(chatId);
+
+  if (!record.value) return;
+
+  const userId = userStore.userModel.id;
+  const updatedUnseenMessage = { ...record.value.unseen_message };
+
+  updatedUnseenMessage[userId] = 0;
+
+  await pb.collection('direct_chat_info').update(chatId, {
+    unseen_message: updatedUnseenMessage
+  });
+});
 </script>

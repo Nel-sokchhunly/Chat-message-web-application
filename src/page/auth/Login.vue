@@ -277,6 +277,7 @@
 import { ref } from 'vue';
 import { FormState, SignupForm } from '../../types/auth';
 import { Login, Signup } from '../../helpers/auth';
+import { useRouter } from 'vue-router';
 
 const formState = ref<FormState>(FormState.login);
 
@@ -287,6 +288,8 @@ const password = ref<string>('');
 const isRequestingApi = ref(false);
 
 const errorsMessages = ref<string>('');
+
+const router = useRouter();
 
 const handleSwitchingFormState = (state: FormState) => {
   email.value = '';
@@ -312,6 +315,8 @@ const handleLogin = async () => {
   }
 
   isRequestingApi.value = false;
+
+  router.push({ name: 'home' });
 };
 
 const handleSignup = async () => {
@@ -347,6 +352,8 @@ const handleSignup = async () => {
   }
 
   isRequestingApi.value = false;
+
+  router.push({ name: 'home' });
 };
 </script>
 

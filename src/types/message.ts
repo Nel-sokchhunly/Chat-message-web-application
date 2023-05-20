@@ -15,13 +15,15 @@ type existing_chat = {
 export interface DirectChatInfo {
   id?: string;
   members: string[];
-  unique_ids: string;
+  type: 'direct' | 'group';
   messages_object: {
     message_list: MessageObject[];
   };
+  unseen_message: any;
   expand?: {
     members: UserInfo[];
   };
+  unique_ids: string;
 }
 
 export type MessageObject = {

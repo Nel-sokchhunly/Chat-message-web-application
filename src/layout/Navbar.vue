@@ -16,7 +16,12 @@
 
       <button
         class="bg-secondary bg-opacity-40 rounded-full p-2 px-4 text-primary font-bold"
-        @click="Logout"
+        @click="
+          async () => {
+            Logout();
+            router.push({ name: 'auth' });
+          }
+        "
       >
         logout
       </button>
@@ -27,6 +32,9 @@
 <script setup lang="ts">
 import { useUserStore } from '../store/user';
 import { Logout } from '../helpers/auth';
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
+
+const router = useRouter();
 </script>
