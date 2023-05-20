@@ -42,7 +42,8 @@ export async function getAllDirectMessage(pb: any) {
   const result = await pb.collection('direct_chat_info').getFullList({
     sort: '-updated',
     filter: `members.id?='${pb.authStore.model?.id}'`,
-    expand: 'members'
+    expand: 'members',
+    $autoCancel: false
   });
 
   return result;

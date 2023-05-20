@@ -91,9 +91,5 @@ onMounted(async () => {
   const directMessage = await getAllDirectMessage(pb);
 
   userStore.$state.directMessage = directMessage;
-
-  console.log('====================================');
-  console.log(userStore.allDirectMessageUser);
-  console.log('====================================');
 });
 </script>

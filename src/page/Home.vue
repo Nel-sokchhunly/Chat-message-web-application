@@ -31,6 +31,8 @@ import { onBeforeMount } from 'vue';
 import { usePocketBaseStore } from '../store/pocketbase';
 import { useUserStore } from '../store/user';
 import { getAllDirectMessage } from '../helpers/pocketbase';
+import { onMounted } from 'vue';
+import { askNotificationPermission } from '../helpers/notification';
 
 const selected = ref<any>(1);
 const options = [
@@ -100,10 +102,25 @@ onBeforeMount(async () => {
         userStore.$state.directMessage.forEach((direct, index) => {
           if (direct.id === e.record.id) {
             userStore.$state.directMessage[index] = e.record;
+
+            const currentUnseen =
+              direct.unseen_message[userStore.userModel.id] ?? 0;
+            const newRecordUnseen =
+              e.record.unseen_message[userStore.userModel.id] ?? 0;
+
+            // check if unseen is the same
+            if (currentUnseen < newRecordUnseen) {
+              let audio = new Audio('/sound/notification-sound.mp3');
+              audio.play();
+            }
           }
         });
       }
     });
+});
+
+onMounted(() => {
+  askNotificationPermission();
 });
 </script>
 

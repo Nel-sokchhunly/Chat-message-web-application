@@ -312,6 +312,9 @@ const handleLogin = async () => {
   // if result is true, mean the signup has completed
   if (!result.isSuccess) {
     errorsMessages.value = result.data.message;
+    isRequestingApi.value = false;
+
+    return;
   }
 
   isRequestingApi.value = false;
@@ -349,6 +352,9 @@ const handleSignup = async () => {
     });
 
     errorsMessages.value = errors.join('\n');
+    isRequestingApi.value = false;
+
+    return;
   }
 
   isRequestingApi.value = false;

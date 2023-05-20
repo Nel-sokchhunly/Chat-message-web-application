@@ -20,7 +20,13 @@
           <button type="button" @click="toggleEmojiPicket" class="h-8 w-8 ml-1">
             <img src="/icon/smile.svg" />
           </button>
-          <div v-if="isShowEmojiPicker" class="absolute bottom-full mb-4">
+          <div
+            :class="
+              isShowEmojiPicker
+                ? 'absolute bottom-full mb-4 block'
+                : 'absolute bottom-full mb-4 invisible'
+            "
+          >
             <EmojiPicker :native="true" @select="onSelectEmoji" />
           </div>
 
