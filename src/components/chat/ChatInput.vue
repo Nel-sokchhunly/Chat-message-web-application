@@ -35,6 +35,7 @@
             type="text"
             v-model="textMessage"
             placeholder="enter your message"
+            autocomplete="off"
             :classes="{
               outer: 'w-full h-12 bg-transparent',
               inner: 'max-w-md overflow-hidden focus-within:border-blue-500',

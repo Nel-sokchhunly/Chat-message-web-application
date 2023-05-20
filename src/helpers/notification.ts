@@ -1,3 +1,5 @@
+import { DirectChatInfo } from '../types/message';
+
 export function askNotificationPermission() {
   if (!('Notification' in window)) {
     // Check if the browser supports notifications
@@ -5,5 +7,13 @@ export function askNotificationPermission() {
   } else if (Notification.permission !== 'denied') {
     // We need to ask the user for permission
     Notification.requestPermission();
+  }
+}
+
+export function sendNotification(title: string) {
+  if ('Notification' in window) {
+    new Notification(title, {
+      image: '/icon/chat.png'
+    });
   }
 }

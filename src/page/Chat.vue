@@ -1,6 +1,12 @@
 <template>
   <div
-    v-if="record && oppositeUser && userStore.userModel"
+    v-if="!(record && oppositeUser && userStore.userModel)"
+    class="h-screen flex justify-center items-center"
+  >
+    <Loading />
+  </div>
+  <div
+    v-else
     class="relative flex flex-col flex-grow justify-center items-center"
   >
     <ChatNavbar :username="oppositeUser?.username" />
@@ -13,9 +19,6 @@
       />
     </div>
     <ChatInput :onSendChat="onSendChat" />
-  </div>
-  <div v-else class="h-screen flex justify-center items-center">
-    <Loading />
   </div>
 </template>
 

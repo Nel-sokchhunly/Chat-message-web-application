@@ -1,5 +1,7 @@
 <template>
-  <div class="fixed bottom-0 h-fit w-screen flex justify-center items-center">
+  <div
+    class="fixed bottom-0 h-20 bg-white w-screen flex justify-center items-center"
+  >
     <div
       class="w-screen md:w-1/2 p-4 flex flex-grow-1 justify-center items-center space-x-4"
     >

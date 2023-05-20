@@ -14,6 +14,35 @@
       :options="options"
       :onchange="(id: Number) => selected = id"
     />
+
+    <!-- ask for sound notification permission -->
+    <div
+      v-if="isShowNotificationPermission"
+      class="fixed bottom-20 w-fit px-4 py-2 m-2 bg-secondary bg-opacity-50 text-center rounded-lg flex items-center space-x-2"
+    >
+      <button
+        @click="() => (isShowNotificationPermission = false)"
+        class="flex justify-center"
+      >
+        <img class="h-5 w-5" src="icon/cross.svg" alt="" />
+      </button>
+
+      <div class="text-xs flex-1 select-none">
+        Click accept and keep the tab active to receive notification
+      </div>
+
+      <button
+        @click="
+          () => {
+            isShowNotificationPermission = false;
+            userStore.$state.isNotificationSoundAllowed = true;
+          }
+        "
+        class="flex justify-center"
+      >
+        <img class="h-5 w-5" src="icon/check.svg" alt="" />
+      </button>
+    </div>
   </div>
 </template>
 
@@ -31,8 +60,11 @@ import { onBeforeMount } from 'vue';
 import { usePocketBaseStore } from '../store/pocketbase';
 import { useUserStore } from '../store/user';
 import { getAllDirectMessage } from '../helpers/pocketbase';
-import { onMounted } from 'vue';
-import { askNotificationPermission } from '../helpers/notification';
+
+import {
+  askNotificationPermission,
+  sendNotification
+} from '../helpers/notification';
 
 const selected = ref<any>(1);
 const options = [
@@ -69,58 +101,84 @@ const options = [
 const pb = usePocketBaseStore();
 const userStore = useUserStore();
 
+const isShowNotificationPermission = ref<boolean>(true);
+
 // const directMessageLocalStorage = ref<DirectChatInfo[]>();
 
 onBeforeMount(async () => {
-  // get all users list
-  const users = await pb.pocketbase.collection('users').getFullList({
-    filter: `id!='${pb.pocketbase.authStore.model?.id}'`
-  });
+  askNotificationPermission();
 
-  const userList: any = [];
-  users.forEach((user: any) => {
-    userList.push({
-      ...user
+  try {
+    // get all users list
+    const users = await pb.pocketbase.collection('users').getFullList({
+      filter: `id!='${pb.pocketbase.authStore.model?.id}'`
     });
-  });
 
-  userStore.$state.usersList = userList;
+    const userList: any = [];
+    users.forEach((user: any) => {
+      userList.push({
+        ...user
+      });
+    });
 
-  // get all direct message
-  const directMessage = await getAllDirectMessage(pb.pocketbase);
+    userStore.$state.usersList = userList;
 
-  userStore.$state.directMessage = directMessage;
+    // get all direct message
+    const directMessage = await getAllDirectMessage(pb.pocketbase);
 
-  userStore.$state.isFetchingFinished = true;
+    userStore.$state.directMessage = directMessage;
 
-  // subscribe to all direct message
-  await pb.pocketbase
-    .collection('direct_chat_info')
-    .subscribe('*', (e: any) => {
-      if (e.record.members.includes(userStore.userModel.id)) {
-        // userStore.$state.directMessage[e.record.id] = e.record;
-        userStore.$state.directMessage.forEach((direct, index) => {
-          if (direct.id === e.record.id) {
-            userStore.$state.directMessage[index] = e.record;
+    userStore.$state.isFetchingFinished = true;
 
-            const currentUnseen =
-              direct.unseen_message[userStore.userModel.id] ?? 0;
-            const newRecordUnseen =
-              e.record.unseen_message[userStore.userModel.id] ?? 0;
+    // subscribe to all direct message
+    await pb.pocketbase
+      .collection('direct_chat_info')
+      .subscribe('*', (e: any) => {
+        if (e.record.members.includes(userStore.userModel.id)) {
+          userStore.$state.directMessage[e.record.id] =
+            e.record.messages_object.message_list.sort(function (
+              a: any,
+              b: any
+            ) {
+              var keyA = new Date(a.created),
+                keyB = new Date(b.created);
+              // Compare the 2 dates
+              if (keyA < keyB) return 1;
+              if (keyA > keyB) return -1;
+              return 0;
+            });
 
-            // check if unseen is the same
-            if (currentUnseen < newRecordUnseen) {
-              let audio = new Audio('/sound/notification-sound.mp3');
-              audio.play();
+          userStore.$state.directMessage.forEach((direct, index) => {
+            if (direct.id === e.record.id) {
+              userStore.$state.directMessage[index] = e.record;
+
+              const currentUnseen =
+                direct.unseen_message[userStore.userModel.id] ?? 0;
+              const newRecordUnseen =
+                e.record.unseen_message[userStore.userModel.id] ?? 0;
+
+              // check if unseen is the same
+              if (currentUnseen < newRecordUnseen) {
+                if (userStore.$state.isNotificationSoundAllowed) {
+                  let audio = new Audio('/sound/notification-sound.mp3');
+                  audio.play();
+                }
+
+                sendNotification('New direct message!!!');
+              }
             }
-          }
-        });
-      }
-    });
+          });
+        }
+      });
+  } catch (err) {
+    console.log('====================================');
+    console.log(err);
+    console.log('====================================');
+  }
 });
 
-onMounted(() => {
-  askNotificationPermission();
+onBeforeMount(() => {
+  pb.pocketbase.collection('direct_chat_info').unsubscribe();
 });
 </script>
 

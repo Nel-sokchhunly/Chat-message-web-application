@@ -20,6 +20,10 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+*::-webkit-scrollbar {
+  display: none;
+}
+
 /* * {
   border: red dotted 1px;
   box-sizing: content-box;
