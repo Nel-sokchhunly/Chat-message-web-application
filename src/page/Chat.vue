@@ -98,21 +98,23 @@ onMounted(async () => {
     return 0;
   });
 
-  await pb.collection('direct_chat_info').subscribe(chatId, (e: any) => {
-    record.value = e.record;
+  await pb
+    .collection('direct_chat_info')
+    .subscribe(chatId, (e: any) => {
+      record.value = e.record;
 
-    sortedMessages.value = e.record.messages_object.message_list.sort(function (
-      a: any,
-      b: any
-    ) {
-      var keyA = new Date(a.created),
-        keyB = new Date(b.created);
-      // Compare the 2 dates
-      if (keyA < keyB) return 1;
-      if (keyA > keyB) return -1;
-      return 0;
-    });
-  });
+      sortedMessages.value = e.record.messages_object.message_list.sort(
+        function (a: any, b: any) {
+          var keyA = new Date(a.created),
+            keyB = new Date(b.created);
+          // Compare the 2 dates
+          if (keyA < keyB) return 1;
+          if (keyA > keyB) return -1;
+          return 0;
+        }
+      );
+    })
+    .catch(() => console.log('Error in Chat.vue'));
 
   oppositeUser.value = data[0].expand.members.find(
     (user: UserInfo) => user.id !== userStore.userModel.id
@@ -120,17 +122,30 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(async () => {
-  await pb.collection('direct_chat_info').unsubscribe(chatId);
+  try {
+    await pb
+      .collection('direct_chat_info')
+      .unsubscribe()
+      .catch(() => {
+        console.log('====================================');
+        console.log('error unsubscribe', chatId);
+        console.log('====================================');
+      });
 
-  if (!record.value) return;
+    if (!record.value) return;
 
-  const userId = userStore.userModel.id;
-  const updatedUnseenMessage = { ...record.value.unseen_message };
+    const userId = userStore.userModel.id;
+    const updatedUnseenMessage = { ...record.value.unseen_message };
 
-  updatedUnseenMessage[userId] = 0;
+    updatedUnseenMessage[userId] = 0;
 
-  await pb.collection('direct_chat_info').update(chatId, {
-    unseen_message: updatedUnseenMessage
-  });
+    await pb.collection('direct_chat_info').update(chatId, {
+      unseen_message: updatedUnseenMessage
+    });
+  } catch (err) {
+    console.log('====================================');
+    console.log('error when unmount');
+    console.log('====================================');
+  }
 });
 </script>

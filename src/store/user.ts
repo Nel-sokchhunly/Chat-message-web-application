@@ -8,7 +8,8 @@ export const useUserStore = defineStore('user', {
     usersList: [],
     directMessage: [],
     isFetchingFinished: false,
-    isNotificationSoundAllowed: false
+    isNotificationSoundAllowed: false,
+    isShowNotificationPermission: true
   }),
   getters: {
     userModel: (state) => state.authStore.model,
@@ -53,4 +54,5 @@ interface UserStoreState {
   directMessage: DirectChatInfo[];
   isFetchingFinished: boolean;
   isNotificationSoundAllowed: boolean;
+  isShowNotificationPermission: boolean;
 }

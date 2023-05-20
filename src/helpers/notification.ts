@@ -1,5 +1,3 @@
-import { DirectChatInfo } from '../types/message';
-
 export function askNotificationPermission() {
   if (!('Notification' in window)) {
     // Check if the browser supports notifications

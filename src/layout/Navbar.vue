@@ -21,6 +21,10 @@
         @click="
           async () => {
             Logout();
+            userStore.$patch({
+              isNotificationSoundAllowed: false,
+              isShowNotificationPermission: true
+            });
             router.push({ name: 'auth' });
           }
         "

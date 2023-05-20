@@ -2,8 +2,6 @@ import Login from '../page/auth/Login.vue';
 import Home from '../page/Home.vue';
 import Chat from '../page/Chat.vue';
 
-import { useRouter } from 'vue-router';
-
 export const routes = [
   {
     name: 'home',

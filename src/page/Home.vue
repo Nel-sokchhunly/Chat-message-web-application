@@ -17,11 +17,13 @@
 
     <!-- ask for sound notification permission -->
     <div
-      v-if="isShowNotificationPermission"
+      v-if="userStore.$state.isShowNotificationPermission"
       class="fixed bottom-20 w-fit px-4 py-2 m-2 bg-secondary bg-opacity-50 text-center rounded-lg flex items-center space-x-2"
     >
       <button
-        @click="() => (isShowNotificationPermission = false)"
+        @click="
+          () => (userStore.userModel.isShowNotificationPermission = false)
+        "
         class="flex justify-center"
       >
         <img class="h-5 w-5" src="icon/cross.svg" alt="" />
@@ -32,12 +34,7 @@
       </div>
 
       <button
-        @click="
-          () => {
-            isShowNotificationPermission = false;
-            userStore.$state.isNotificationSoundAllowed = true;
-          }
-        "
+        @click="handleAcceptSoundNotification"
         class="flex justify-center"
       >
         <img class="h-5 w-5" src="icon/check.svg" alt="" />
@@ -60,11 +57,6 @@ import { onBeforeMount } from 'vue';
 import { usePocketBaseStore } from '../store/pocketbase';
 import { useUserStore } from '../store/user';
 import { getAllDirectMessage } from '../helpers/pocketbase';
-
-import {
-  askNotificationPermission,
-  sendNotification
-} from '../helpers/notification';
 
 const selected = ref<any>(1);
 const options = [
@@ -101,80 +93,85 @@ const options = [
 const pb = usePocketBaseStore();
 const userStore = useUserStore();
 
-const isShowNotificationPermission = ref<boolean>(true);
+let audioObject: HTMLAudioElement;
 
-// const directMessageLocalStorage = ref<DirectChatInfo[]>();
+const handleAcceptSoundNotification = () => {
+  userStore.$state.isShowNotificationPermission = false;
+  userStore.$state.isNotificationSoundAllowed = true;
+
+  audioObject.play();
+  audioObject.pause();
+  audioObject.currentTime = 0;
+};
 
 onBeforeMount(async () => {
-  askNotificationPermission();
+  // askNotificationPermission();
+  audioObject = new Audio('/sound/notification-sound.wav');
 
-  try {
-    // get all users list
-    const users = await pb.pocketbase.collection('users').getFullList({
-      filter: `id!='${pb.pocketbase.authStore.model?.id}'`
+  // try {
+  // get all users list
+  const users = await pb.pocketbase.collection('users').getFullList({
+    filter: `id!='${pb.pocketbase.authStore.model?.id}'`
+  });
+
+  const userList: any = [];
+  users.forEach((user: any) => {
+    userList.push({
+      ...user
     });
+  });
 
-    const userList: any = [];
-    users.forEach((user: any) => {
-      userList.push({
-        ...user
-      });
-    });
+  userStore.$state.usersList = userList;
 
-    userStore.$state.usersList = userList;
+  // get all direct message
+  const directMessage = await getAllDirectMessage(pb.pocketbase);
 
-    // get all direct message
-    const directMessage = await getAllDirectMessage(pb.pocketbase);
+  userStore.$state.directMessage = directMessage;
 
-    userStore.$state.directMessage = directMessage;
+  userStore.$state.isFetchingFinished = true;
 
-    userStore.$state.isFetchingFinished = true;
-
-    // subscribe to all direct message
-    await pb.pocketbase
-      .collection('direct_chat_info')
-      .subscribe('*', (e: any) => {
-        if (e.record.members.includes(userStore.userModel.id)) {
-          userStore.$state.directMessage[e.record.id] =
-            e.record.messages_object.message_list.sort(function (
-              a: any,
-              b: any
-            ) {
-              var keyA = new Date(a.created),
-                keyB = new Date(b.created);
-              // Compare the 2 dates
-              if (keyA < keyB) return 1;
-              if (keyA > keyB) return -1;
-              return 0;
-            });
-
-          userStore.$state.directMessage.forEach((direct, index) => {
-            if (direct.id === e.record.id) {
-              userStore.$state.directMessage[index] = e.record;
-
-              const currentUnseen =
-                direct.unseen_message[userStore.userModel.id] ?? 0;
-              const newRecordUnseen =
-                e.record.unseen_message[userStore.userModel.id] ?? 0;
-
-              // check if unseen is the same
-              if (currentUnseen < newRecordUnseen) {
-                if (userStore.$state.isNotificationSoundAllowed) {
-                  let audio = new Audio('/sound/notification-sound.mp3');
-                  audio.play();
-                }
-
-                sendNotification('New direct message!!!');
-              }
-            }
+  // subscribe to all direct message
+  await pb.pocketbase
+    .collection('direct_chat_info')
+    .subscribe('*', (e: any) => {
+      if (e.record.members.includes(userStore.userModel.id)) {
+        userStore.$state.directMessage[e.record.id] =
+          e.record.messages_object.message_list.sort(function (a: any, b: any) {
+            var keyA = new Date(a.created),
+              keyB = new Date(b.created);
+            // Compare the 2 dates
+            if (keyA < keyB) return 1;
+            if (keyA > keyB) return -1;
+            return 0;
           });
-        }
-      });
-  } catch (err) {
-    console.log('====================================');
-    console.log(err);
-    console.log('====================================');
-  }
+
+        userStore.$state.directMessage.forEach((direct, index) => {
+          if (direct.id === e.record.id) {
+            userStore.$state.directMessage[index] = e.record;
+
+            const currentUnseen =
+              direct.unseen_message[userStore.userModel.id] ?? 0;
+            const newRecordUnseen =
+              e.record.unseen_message[userStore.userModel.id] ?? 0;
+
+            // check if unseen is the same
+            if (currentUnseen < newRecordUnseen) {
+              if (userStore.$state.isNotificationSoundAllowed) {
+                audioObject.play();
+              }
+
+              // sendNotification('New direct message!!!');
+            }
+          }
+        });
+      }
+    })
+    .catch(() => console.log('Error in Home.vue'));
+  // } catch (err) {
+  //   console.log('====================================');
+  //   console.log(err);
+  //   console.log('====================================');
+  // }
 });
 
 onBeforeMount(() => {
