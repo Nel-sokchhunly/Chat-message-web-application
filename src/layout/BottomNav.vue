@@ -42,6 +42,6 @@ defineProps({
 });
 
 const defaultBtnClass =
-  ' flex items-center space-x-2 px-4 py-2 rounded-full hover:transition-all duration-500 delay-0 ';
+  ' flex items-center space-x-2 px-4 py-2 rounded-full hover:transition-all duration-500 delay-50 ';
 const activeBtnClass = defaultBtnClass + ' flex-1 bg-opacity-60 ';
 </script>

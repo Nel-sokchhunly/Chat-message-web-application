@@ -2,7 +2,7 @@
   <div class="flex-1 relative flex justify-center">
     <Navbar :onchange="(id: Number) => selected = id" />
 
-    <div class="w-screen md:w-1/2 fixed top-20 p-4">
+    <div class="h-screen w-screen md:w-1/2 fixed top-20 overflow-hidden">
       <DirectMessage v-if="selected === 1" />
       <GroupMessage v-if="selected === 2" />
       <UserList v-if="selected === 3" />
@@ -18,22 +18,29 @@
     <!-- ask for sound notification permission -->
     <div
       v-if="userStore.$state.isShowNotificationPermission"
-      class="fixed bottom-20 w-fit px-4 py-2 m-2 bg-secondary bg-opacity-50 text-center rounded-lg flex items-center space-x-2"
+      class="z-10 fixed bg-white bottom-20 w-fit m-2 text-center rounded-lg overflow-clip"
     >
-      <button @click="closeAcceptSoundNotification" class="flex justify-center">
-        <img class="h-5 w-5" src="/icon/cross.svg" alt="" />
-      </button>
-
-      <div class="text-xs flex-1 select-none">
-        Click accept and keep the tab active to receive notification
-      </div>
-
-      <button
-        @click="handleAcceptSoundNotification"
-        class="flex justify-center"
+      <div
+        class="bg-secondary bg-opacity-50 flex items-center space-x-2 px-4 py-2"
       >
-        <img class="h-5 w-5" src="/icon/check.svg" alt="" />
-      </button>
+        <button
+          @click="closeAcceptSoundNotification"
+          class="flex justify-center"
+        >
+          <img class="h-5 w-5" src="/icon/cross.svg" alt="" />
+        </button>
+
+        <div class="text-xs flex-1 select-none">
+          Click accept and keep the tab active to receive notification
+        </div>
+
+        <button
+          @click="handleAcceptSoundNotification"
+          class="flex justify-center"
+        >
+          <img class="h-5 w-5" src="/icon/check.svg" alt="" />
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -98,9 +105,9 @@ const handleAcceptSoundNotification = () => {
   userStore.$state.isShowNotificationPermission = false;
   userStore.$state.isNotificationSoundAllowed = true;
 
+  audioObject.volume = 0;
   audioObject.play();
-  audioObject.pause();
-  audioObject.currentTime = 0;
+  audioObject.volume = 1;
 };
 
 onBeforeMount(async () => {
