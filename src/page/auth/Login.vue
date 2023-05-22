@@ -4,7 +4,7 @@
   >
     <!-- header -->
     <div class="flex justify-center items-center space-x-4">
-      <img src="icon/chat-high-quality.png" height="72" width="72" />
+      <img src="/icon/chat-high-quality.png" height="72" width="72" />
     </div>
 
     <!-- login form -->

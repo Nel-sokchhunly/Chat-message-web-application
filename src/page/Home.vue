@@ -1,6 +1,6 @@
 <template>
   <div class="flex-1 relative flex justify-center">
-    <Navbar />
+    <Navbar :onchange="(id: Number) => selected = id" />
 
     <div class="w-screen md:w-1/2 fixed top-20 p-4">
       <DirectMessage v-if="selected === 1" />
@@ -20,13 +20,8 @@
       v-if="userStore.$state.isShowNotificationPermission"
       class="fixed bottom-20 w-fit px-4 py-2 m-2 bg-secondary bg-opacity-50 text-center rounded-lg flex items-center space-x-2"
     >
-      <button
-        @click="
-          () => (userStore.userModel.isShowNotificationPermission = false)
-        "
-        class="flex justify-center"
-      >
-        <img class="h-5 w-5" src="icon/cross.svg" alt="" />
+      <button @click="closeAcceptSoundNotification" class="flex justify-center">
+        <img class="h-5 w-5" src="/icon/cross.svg" alt="" />
       </button>
 
       <div class="text-xs flex-1 select-none">
@@ -37,7 +32,7 @@
         @click="handleAcceptSoundNotification"
         class="flex justify-center"
       >
-        <img class="h-5 w-5" src="icon/check.svg" alt="" />
+        <img class="h-5 w-5" src="/icon/check.svg" alt="" />
       </button>
     </div>
   </div>
@@ -63,37 +58,41 @@ const options = [
   {
     id: 1,
     title: 'Direct',
-    icon: 'icon/direct-message.svg',
+    icon: '/icon/direct-message.svg',
     bgColor: 'bg-secondary',
     textColor: 'text-primary'
   },
   {
     id: 2,
-    icon: 'icon/group-message.svg',
+    icon: '/icon/group-message.svg',
     title: 'Group',
     bgColor: 'bg-secondary',
     textColor: 'text-primary'
   },
   {
     id: 3,
-    icon: 'icon/user-list.svg',
+    icon: '/icon/user-list.svg',
     title: 'Users',
     bgColor: 'bg-secondary',
     textColor: 'text-primary'
-  },
-  {
-    id: 4,
-    icon: 'icon/user.svg',
-    title: 'Profile',
-    bgColor: 'bg-secondary',
-    textColor: 'text-primary'
   }
+  // {
+  //   id: 4,
+  //   icon: '/icon/user.svg',
+  //   title: 'Profile',
+  //   bgColor: 'bg-secondary',
+  //   textColor: 'text-primary'
+  // }
 ];
 
 const pb = usePocketBaseStore();
 const userStore = useUserStore();
 
 let audioObject: HTMLAudioElement;
+
+const closeAcceptSoundNotification = () => {
+  userStore.$state.isShowNotificationPermission = false;
+};
 
 const handleAcceptSoundNotification = () => {
   userStore.$state.isShowNotificationPermission = false;
@@ -134,6 +133,9 @@ onBeforeMount(async () => {
   await pb.pocketbase
     .collection('direct_chat_info')
     .subscribe('*', (e: any) => {
+      console.log('====================================');
+      console.log('subscription called ');
+      console.log('====================================');
       if (e.record.members.includes(userStore.userModel.id)) {
         userStore.$state.directMessage[e.record.id] =
           e.record.messages_object.message_list.sort(function (a: any, b: any) {

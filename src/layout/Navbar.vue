@@ -17,19 +17,15 @@
       </div>
 
       <button
-        class="bg-secondary bg-opacity-40 rounded-full p-2 px-4 text-primary font-bold"
+        class="bg-secondary bg-opacity-40 rounded-full p-2 px-4 text-primary font-bold flex space-x-2 items-center"
         @click="
           async () => {
-            Logout();
-            userStore.$patch({
-              isNotificationSoundAllowed: false,
-              isShowNotificationPermission: true
-            });
-            router.push({ name: 'auth' });
+            onchange(4); // 4 is the id for profile component
           }
         "
       >
-        logout
+        <img src="/icon/user.svg" alt="profile" class="h-4" />
+        <span class="hidden md:block">Profile</span>
       </button>
     </div>
   </div>
@@ -37,10 +33,13 @@
 
 <script setup lang="ts">
 import { useUserStore } from '../store/user';
-import { Logout } from '../helpers/auth';
-import { useRouter } from 'vue-router';
+
+defineProps({
+  onchange: {
+    type: Function,
+    required: true
+  }
+});
 
 const userStore = useUserStore();
-
-const router = useRouter();
 </script>

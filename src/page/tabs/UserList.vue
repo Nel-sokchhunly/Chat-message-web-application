@@ -18,7 +18,7 @@
 
       <!-- add to direct btn -->
       <button @click="directMessage(user.id)">
-        <img src="icon/paper-plane.svg" class="w-6" />
+        <img src="/icon/paper-plane.svg" class="w-6" />
       </button>
     </div>
   </div>
