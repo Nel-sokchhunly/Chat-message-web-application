@@ -37,48 +37,6 @@
           <img src="/icon/paper-plane.svg" class="w-6" />
         </button>
       </div>
-      <div
-        v-for="user in filteredUserList"
-        class="flex items-center justify-between pr-4 border-2 w-full mb-4 rounded-lg"
-      >
-        <!-- icon -->
-        <div class="flex items-center">
-          <div class="w-12 h-12 rounded-full">
-            <identicon-svg
-              class="block"
-              :username="user.username"
-              saturation="50"
-            ></identicon-svg>
-          </div>
-          <h1>{{ user.username }}</h1>
-        </div>
-
-        <!-- add to direct btn -->
-        <button @click="directMessage(user.id)">
-          <img src="/icon/paper-plane.svg" class="w-6" />
-        </button>
-      </div>
-      <div
-        v-for="user in filteredUserList"
-        class="flex items-center justify-between pr-4 border-2 w-full mb-4 rounded-lg"
-      >
-        <!-- icon -->
-        <div class="flex items-center">
-          <div class="w-12 h-12 rounded-full">
-            <identicon-svg
-              class="block"
-              :username="user.username"
-              saturation="50"
-            ></identicon-svg>
-          </div>
-          <h1>{{ user.username }}</h1>
-        </div>
-
-        <!-- add to direct btn -->
-        <button @click="directMessage(user.id)">
-          <img src="/icon/paper-plane.svg" class="w-6" />
-        </button>
-      </div>
     </div>
   </div>
 </template>
