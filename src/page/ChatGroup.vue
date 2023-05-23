@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!(record && oppositeUser && userStore.userModel)"
+    v-if="!(record && userStore.userModel)"
     class="h-screen flex justify-center items-center"
   >
     <Loading />
@@ -9,12 +9,12 @@
     v-else
     class="relative flex flex-col flex-grow justify-center items-center"
   >
-    <ChatNavbar :username="oppositeUser?.username" />
+    <ChatNavbar :username="record.name" />
     <div class="fixed bottom-0 h-screen w-screen md:w-1/2 py-20 overflow-clip">
       <ChatMessages
         :chat-type="record.type"
         :sender-user="userStore.userModel"
-        :receiver-user="(oppositeUser as UserInfo)"
+        :group-member-obj="record.expand?.members"
         :messages="(sortedMessages as MessageObject[])"
       />
     </div>
@@ -28,8 +28,7 @@ import { useRoute } from 'vue-router';
 import { usePocketBaseStore } from '../store/pocketbase';
 
 import { useUserStore } from '../store/user';
-import { DirectChatInfo, MessageObject } from '../types/message';
-import { UserInfo } from '../types/auth';
+import { GroupChatInfo, MessageObject } from '../types/message';
 
 import Loading from '../components/Loading.vue';
 import ChatNavbar from '../components/chat/ChatNavbar.vue';
@@ -40,8 +39,7 @@ const route = useRoute();
 const pb = usePocketBaseStore().pocketbase;
 const userStore = useUserStore();
 
-const record = ref<DirectChatInfo>();
-const oppositeUser = ref<UserInfo>();
+const record = ref<GroupChatInfo>();
 
 const sortedMessages = ref<MessageObject[]>();
 
@@ -49,6 +47,7 @@ const chatId = route.params.id;
 
 const onSendChat = async (text: string) => {
   if (!record.value) return;
+
   const sendMessage = [
     ...record.value.messages_object.message_list,
     {
@@ -59,19 +58,18 @@ const onSendChat = async (text: string) => {
     }
   ];
 
-  let unseen_message: any = {};
-  if (record.value.unseen_message) {
-    const receiverId = oppositeUser.value?.id as string;
-    let unseenAmount = record.value.unseen_message[receiverId] ?? 0;
+  let unseen_message: any = {
+    ...record.value.unseen_message
+  };
+  Object.keys(record.value.unseen_message).forEach((id) => {
+    if (id === userStore.userModel.id) return;
 
-    unseen_message = {
-      ...record.value.unseen_message
-    };
+    const amount = unseen_message[id];
 
-    unseen_message[receiverId] = unseenAmount += 1;
-  }
+    unseen_message[id] = amount + 1;
+  });
 
-  await pb.collection('direct_chat_info').update(chatId, {
+  await pb.collection('group_chat_info').update(chatId, {
     messages_object: {
       message_list: sendMessage
     },
@@ -80,7 +78,7 @@ const onSendChat = async (text: string) => {
 };
 
 onMounted(async () => {
-  const data = await pb.collection('direct_chat_info').getFullList({
+  const data = await pb.collection('group_chat_info').getFullList({
     filter: `id~'${chatId}'`,
     expand: 'members'
   });
@@ -100,7 +98,7 @@ onMounted(async () => {
   });
 
   await pb
-    .collection('direct_chat_info')
+    .collection('group_chat_info')
     .subscribe(chatId, (e: any) => {
       record.value = e.record;
 
@@ -117,15 +115,15 @@ onMounted(async () => {
     })
     .catch(() => console.log('Error in Chat.vue'));
 
-  oppositeUser.value = data[0].expand.members.find(
-    (user: UserInfo) => user.id !== userStore.userModel.id
-  );
+  // oppositeUser.value = data[0].expand.members.find(
+  //   (user: UserInfo) => user.id !== userStore.userModel.id
+  // );
 });
 
 onBeforeUnmount(async () => {
   try {
     await pb
-      .collection('direct_chat_info')
+      .collection('group_chat_info')
       .unsubscribe()
       .catch(() => {
         console.log('====================================');
@@ -140,7 +138,7 @@ onBeforeUnmount(async () => {
 
     updatedUnseenMessage[userId] = 0;
 
-    await pb.collection('direct_chat_info').update(chatId, {
+    await pb.collection('group_chat_info').update(chatId, {
       unseen_message: updatedUnseenMessage
     });
   } catch (err) {

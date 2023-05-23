@@ -10,7 +10,7 @@
     <!-- message -->
     <div
       v-for="(chat, index) in props.messages"
-      :class="isNextMessageSameSender(index) ? 'mb-1' : 'mb-2'"
+      :class="isNextMessageSameSender(index) ? 'mb-1' : 'mb-4'"
     >
       <div
         v-if="isMessageSameDate(index)"
@@ -24,61 +24,73 @@
       </div>
 
       <!-- other message pill-->
-      <div
-        class="flex w-full items-end space-x-1"
-        v-if="props.senderUser.id !== chat.sender"
-      >
-        <div v-if="chatType === 'group'" class="w-8 h-8">
-          <identicon-svg
-            class="block"
-            :username="props.receiverUser.username"
-            saturation="50"
-            v-if="!isNextMessageSameSender(index)"
-          ></identicon-svg>
+      <div v-if="props.senderUser.id !== chat.sender">
+        <div class="flex w-full items-end space-x-1">
+          <div v-if="chatType === 'group'" class="w-8 h-8">
+            <identicon-svg
+              class="block"
+              :username="chat.username"
+              saturation="50"
+              v-if="!isNextMessageSameSender(index)"
+            ></identicon-svg>
+          </div>
+          <div
+            class="min-w-[50px] md:min-w-[100px] bg-primary bg-opacity-25 p-1 px-2 rounded"
+          >
+            {{ chat.text }}
+          </div>
+
+          <div class="text-xs text-black text-opacity-50 mr-4">
+            {{
+              new Date(chat.created).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+              })
+            }}
+          </div>
+
+          <div class="flex-1" />
         </div>
-        <div
-          class="min-w-[50px] md:min-w-[100px] bg-primary bg-opacity-25 p-1 px-2 rounded"
+        <h1
+          v-if="!isNextMessageSameSender(index)"
+          class="text-xs text-black text-opacity-50 px-1 mt-1"
         >
-          {{ chat.text }}
-        </div>
-        <div class="text-xs text-black text-opacity-50 mr-4">
-          {{
-            new Date(chat.created).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit'
-            })
-          }}
-        </div>
-        <div class="flex-1" />
+          {{ chat.username }}
+        </h1>
       </div>
 
       <!-- our message pill -->
-      <div
-        class="flex w-full items-end space-x-1"
-        v-if="props.senderUser.id === chat.sender"
-      >
-        <div class="flex-1" />
-        <div class="text-xs text-black text-opacity-50 ml-4">
-          {{
-            new Date(chat.created).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit'
-            })
-          }}
+      <div v-if="props.senderUser.id === chat.sender">
+        <div class="flex w-full items-end space-x-1">
+          <div class="flex-1" />
+          <div class="text-xs text-black text-opacity-50 ml-4">
+            {{
+              new Date(chat.created).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+              })
+            }}
+          </div>
+          <div
+            class="min-w-[50px] md:min-w-[100px] text-right bg-secondary bg-opacity-25 p-1 px-2 rounded"
+          >
+            {{ chat.text }}
+          </div>
+          <div v-if="chatType === 'group'" class="w-8 h-8">
+            <identicon-svg
+              class="block"
+              :username="props.senderUser.username"
+              saturation="50"
+              v-if="!isNextMessageSameSender(index)"
+            ></identicon-svg>
+          </div>
         </div>
-        <div
-          class="min-w-[50px] md:min-w-[100px] text-right bg-secondary bg-opacity-25 p-1 px-2 rounded"
+        <h1
+          v-if="!isNextMessageSameSender(index)"
+          class="w-full text-right text-xs text-black text-opacity-50 px-1 mt-1"
         >
-          {{ chat.text }}
-        </div>
-        <div v-if="chatType === 'group'" class="w-8 h-8">
-          <identicon-svg
-            class="block"
-            :username="props.senderUser.username"
-            saturation="50"
-            v-if="!isNextMessageSameSender(index)"
-          ></identicon-svg>
-        </div>
+          {{ chat.username }}
+        </h1>
       </div>
     </div>
   </div>
@@ -91,8 +103,9 @@ import { MessageObject } from '../../types/message';
 const props = defineProps<{
   messages: MessageObject[];
   chatType: 'direct' | 'group';
-  receiverUser: UserInfo;
   senderUser: UserInfo;
+  receiverUser?: UserInfo; // if in direct message
+  groupMemberObj?: UserInfo[]; // if in group message
 }>();
 
 function isMessageSameDate(index: number): Boolean {

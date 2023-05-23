@@ -28,7 +28,8 @@ export interface DirectChatInfo {
 
 export type MessageObject = {
   created: string;
-  sender: string;
+  username: string;
+  sender: string; // sender id
   text: string;
 };
 
@@ -42,6 +43,7 @@ export interface GroupChatInfo {
     message_list: MessageObject[];
   };
   unseen_message: any;
+  unseen_amount?: number;
   expand?: {
     members: UserInfo[];
   };

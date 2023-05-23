@@ -22,66 +22,120 @@
     <div>
       <!-- unseen section -->
       <div class="text-sm text-black text-opacity-50 mb-4">Unseen messages</div>
-      <!-- <div
-          v-for="chat in userStore.allDirectMessageUser.unseen"
-          :key="chat.id"
+      <div v-for="chat in userStore.allGroupMessage.unseen" :key="chat.id">
+        <button
+          class="flex flex-grow items-center border-2 w-full mb-4 rounded-lg"
+          @click="handleOpenGroupMessage(chat.id as string)"
         >
-          <button
-            @click="handleOpenDirectMessage(chat.chatId)"
-            class="flex flex-grow items-center border-2 w-full mb-4 rounded-lg"
+          <div class="w-12 h-12 rounded-full">
+            <identicon-svg
+              class="block"
+              :username="chat.id"
+              saturation="50"
+            ></identicon-svg>
+          </div>
+          <h1>{{ chat.name }}</h1>
+          <div class="flex-1"></div>
+          <h1
+            v-if="chat.unseen_amount && chat.unseen_amount > 0"
+            class="text-white bg-red-600 rounded-lg h-6 w-6 flex justify-center items-center px-1 mr-4"
           >
-            <div class="w-12 h-12 rounded-full">
-              <identicon-svg
-                class="block"
-                :username="chat.memberObj.username"
-                saturation="50"
-              ></identicon-svg>
-            </div>
-            <h1>{{ chat.memberObj.username }}</h1>
-            <div class="flex-1"></div>
-            <h1
-              v-if="chat.unseen && chat.unseen > 0"
-              class="text-white bg-red-600 rounded-lg h-6 w-6 flex justify-center items-center px-1 mr-4"
-            >
-              {{ chat.unseen }}
-            </h1>
-          </button>
-        </div> -->
+            {{ chat.unseen_amount }}
+          </h1>
+        </button>
+      </div>
+
       <!-- seen section -->
       <div class="text-sm text-black text-opacity-50 mb-4">messages</div>
 
-      <!-- <div v-for="chat in userStore.allDirectMessageUser.seen" :key="chat.id">
-  <button
-    @click="handleOpenDirectMessage(chat.chatId)"
-    class="flex flex-grow items-center border-2 w-full mb-4 rounded-lg"
-  >
-    <div class="w-12 h-12 rounded-full">
-      <identicon-svg
-        class="block"
-        :username="chat.memberObj.username"
-        saturation="50"
-      ></identicon-svg>
-    </div>
-    <h1>{{ chat.memberObj.username }}</h1>
-    <div class="flex-1"></div>
-    <h1
-      v-if="chat.unseen && chat.unseen > 0"
-      class="text-white bg-red-600 rounded-lg h-6 w-6 flex justify-center items-center px-1 mr-4"
-    >
-      {{ chat.unseen }}
-    </h1>
-  </button>
-</div> -->
+      <div v-for="chat in userStore.allGroupMessage.seen" :key="chat.id">
+        <button
+          class="flex flex-grow items-center border-2 w-full mb-4 rounded-lg"
+          @click="handleOpenGroupMessage(chat.id as string)"
+        >
+          <div class="w-12 h-12 rounded-full">
+            <identicon-svg
+              class="block"
+              :username="chat.id"
+              saturation="50"
+            ></identicon-svg>
+          </div>
+          <h1>{{ chat.name }}</h1>
+          <div class="flex-1"></div>
+          <h1
+            v-if="chat.unseen_amount && chat.unseen_amount > 0"
+            class="text-white bg-red-600 rounded-lg h-6 w-6 flex justify-center items-center px-1 mr-4"
+          >
+            {{ chat.unseen_amount }}
+          </h1>
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { onBeforeMount } from 'vue';
 import { useGlobalStore } from '../../store';
+import { useUserStore } from '../../store/user';
+import { getAllGroupMessage } from '../../helpers/pocketbase';
+import { usePocketBaseStore } from '../../store/pocketbase';
+import { useRouter } from 'vue-router';
 
 const globalStore = useGlobalStore();
+const userStore = useUserStore();
+const pb = usePocketBaseStore();
+
+const router = useRouter();
 
 const showCreateGroupPage = () => {
   globalStore.$state.isShowingCreateGroup = true;
 };
+
+const handleOpenGroupMessage = (chatId: string) => {
+  router.push({
+    path: '/group/' + chatId
+  });
+};
+
+onBeforeMount(async () => {
+  const groupMessage = await getAllGroupMessage();
+
+  console.log('====================================');
+  console.log(groupMessage);
+  console.log('====================================');
+
+  userStore.$state.groupMessage = groupMessage;
+
+  // subscribe to all direct message
+  await pb.pocketbase
+    .collection('group_chat_info')
+    .subscribe('*', (e: any) => {
+      console.log('====================================');
+      console.log('group subscription called');
+      console.log('====================================');
+      if (e.record.members.includes(userStore.userModel.id)) {
+        userStore.$state.groupMessage.forEach((group, index) => {
+          if (group.id === e.record.id) {
+            userStore.$state.groupMessage[index] = e.record;
+
+            const currentUnseen =
+              group.unseen_message[userStore.userModel.id] ?? 0;
+            const newRecordUnseen =
+              e.record.unseen_message[userStore.userModel.id] ?? 0;
+
+            // check if unseen is the same
+            if (currentUnseen < newRecordUnseen) {
+              if (globalStore.$state.isNotificationSoundAllowed) {
+                globalStore.audioObject.play();
+              }
+
+              // sendNotification('New direct message!!!');
+            }
+          }
+        });
+      }
+    })
+    .catch(() => console.log('Error in GroupChat.vue'));
+});
 </script>

@@ -101,8 +101,6 @@ const pb = usePocketBaseStore();
 const userStore = useUserStore();
 const globalStore = useGlobalStore();
 
-let audioObject: HTMLAudioElement;
-
 const closeAcceptSoundNotification = () => {
   globalStore.$state.isShowNotificationPermission = false;
 };
@@ -111,14 +109,14 @@ const handleAcceptSoundNotification = () => {
   globalStore.$state.isShowNotificationPermission = false;
   globalStore.$state.isNotificationSoundAllowed = true;
 
-  audioObject.volume = 0;
-  audioObject.play();
-  audioObject.volume = 1;
+  globalStore.$state.audioObject.volume = 0;
+  globalStore.$state.audioObject.play();
+  globalStore.$state.audioObject.volume = 1;
 };
 
 onBeforeMount(async () => {
   // askNotificationPermission();
-  audioObject = new Audio('/sound/notification-sound.wav');
+  globalStore.$state.audioObject = new Audio('/sound/notification-sound.wav');
 
   // try {
   // get all users list
@@ -171,8 +169,8 @@ onBeforeMount(async () => {
 
             // check if unseen is the same
             if (currentUnseen < newRecordUnseen) {
-              if (globalStore.$state.isNotificationSoundAllowed) {
-                audioObject.play();
+              if (globalStore.isNotificationSoundAllowed) {
+                globalStore.audioObject.play();
               }
 
               // sendNotification('New direct message!!!');
@@ -182,11 +180,6 @@ onBeforeMount(async () => {
       }
     })
     .catch(() => console.log('Error in Home.vue'));
-  // } catch (err) {
-  //   console.log('====================================');
-  //   console.log(err);
-  //   console.log('====================================');
-  // }
 });
 
 onBeforeMount(() => {

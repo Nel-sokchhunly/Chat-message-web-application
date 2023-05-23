@@ -257,6 +257,12 @@ const handleCreateGroup = async () => {
   // includes self_id
   formValues.memberIds.push(userStore.userModel.id);
 
+  // unseen_message
+  let unseen_message = Object();
+  formValues.memberIds.map((id) => {
+    unseen_message[id] = 0;
+  });
+
   // formData
   const formData: GroupChatInfo = {
     name: formValues.groupName,
@@ -265,7 +271,7 @@ const handleCreateGroup = async () => {
     messages_object: {
       message_list: []
     },
-    unseen_message: {},
+    unseen_message,
     type: 'group'
   };
 

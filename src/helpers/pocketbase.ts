@@ -1,4 +1,5 @@
 import { initPbClient } from '../pocketbase';
+import { useUserStore } from '../store/user';
 
 import { DirectChatInfo, GroupChatInfo } from '../types/message';
 
@@ -52,10 +53,22 @@ export async function getAllDirectMessage(pb: any) {
 export async function createGroupChat(formData: GroupChatInfo) {
   try {
     const { pb } = initPbClient();
+    const userStore = useUserStore();
 
     const groupChatRecord = await pb
       .collection('group_chat_info')
       .create(formData);
+
+    const getAllGroupMessage = await pb
+      .collection('group_chat_info')
+      .getFullList({
+        sort: '-updated',
+        filter: `members.id?='${pb.authStore.model?.id}'`,
+        expand: 'members',
+        $autoCancel: false
+      });
+
+    userStore.$state.groupMessage = getAllGroupMessage;
 
     return groupChatRecord;
   } catch (err) {
@@ -64,4 +77,17 @@ export async function createGroupChat(formData: GroupChatInfo) {
     console.log('====================================');
     return err;
   }
+}
+
+export async function getAllGroupMessage() {
+  const { pb } = initPbClient();
+
+  const result = await pb.collection('group_chat_info').getFullList({
+    sort: '-updated',
+    filter: `members.id?='${pb.authStore.model?.id}'`,
+    expand: 'members',
+    $autoCancel: false
+  });
+
+  return result;
 }
