@@ -21,7 +21,12 @@
     <!-- group section -->
     <div>
       <!-- unseen section -->
-      <div class="text-sm text-black text-opacity-50 mb-4">Unseen messages</div>
+      <div
+        v-if="userStore.allGroupMessage.unseen.length > 0"
+        class="text-sm text-black text-opacity-50 mb-4"
+      >
+        Unseen messages
+      </div>
       <div v-for="chat in userStore.allGroupMessage.unseen" :key="chat.id">
         <button
           class="flex flex-grow items-center border-2 w-full mb-4 rounded-lg"
@@ -46,7 +51,12 @@
       </div>
 
       <!-- seen section -->
-      <div class="text-sm text-black text-opacity-50 mb-4">messages</div>
+      <div
+        v-if="userStore.allGroupMessage.seen.length > 0"
+        class="text-sm text-black text-opacity-50 mb-4"
+      >
+        messages
+      </div>
 
       <div v-for="chat in userStore.allGroupMessage.seen" :key="chat.id">
         <button
@@ -100,10 +110,6 @@ const handleOpenGroupMessage = (chatId: string) => {
 
 onBeforeMount(async () => {
   const groupMessage = await getAllGroupMessage();
-
-  console.log('====================================');
-  console.log(groupMessage);
-  console.log('====================================');
 
   userStore.$state.groupMessage = groupMessage;
 

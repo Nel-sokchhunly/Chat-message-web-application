@@ -5,20 +5,33 @@
   >
     <Loading />
   </div>
-  <div
-    v-else
-    class="relative flex flex-col flex-grow justify-center items-center"
-  >
-    <ChatNavbar :username="record.name" />
-    <div class="fixed bottom-0 h-screen w-screen md:w-1/2 py-20 overflow-clip">
-      <ChatMessages
-        :chat-type="record.type"
-        :sender-user="userStore.userModel"
-        :group-member-obj="record.expand?.members"
-        :messages="(sortedMessages as MessageObject[])"
+  <div v-else class="w-screen">
+    <div class="relative flex flex-col flex-grow justify-center items-center">
+      <ChatNavbar
+        :username="record.name"
+        isGroup
+        :group-id="record.id"
+        :on-pressed="toggleGroupInfo"
       />
+      <div
+        class="fixed bottom-0 h-screen w-screen md:w-1/2 py-20 overflow-clip"
+      >
+        <ChatMessages
+          :chat-type="record.type"
+          :sender-user="userStore.userModel"
+          :group-member-obj="record.expand?.members"
+          :messages="(sortedMessages as MessageObject[])"
+        />
+      </div>
+      <ChatInput :onSendChat="onSendChat" />
     </div>
-    <ChatInput :onSendChat="onSendChat" />
+
+    <!-- <CreateGroup v-if="isToggleGroupInfo" /> -->
+    <GroupInfo
+      :is-showing="isToggleGroupInfo"
+      :toggleGroupInfo="toggleGroupInfo"
+      :chat-record="record"
+    />
   </div>
 </template>
 
@@ -34,6 +47,7 @@ import Loading from '../components/Loading.vue';
 import ChatNavbar from '../components/chat/ChatNavbar.vue';
 import ChatInput from '../components/chat/ChatInput.vue';
 import ChatMessages from '../components/chat/ChatMessages.vue';
+import GroupInfo from '../components/group/GroupInfo.vue';
 
 const route = useRoute();
 const pb = usePocketBaseStore().pocketbase;
@@ -80,7 +94,7 @@ const onSendChat = async (text: string) => {
 onMounted(async () => {
   const data = await pb.collection('group_chat_info').getFullList({
     filter: `id~'${chatId}'`,
-    expand: 'members'
+    expand: 'members,created_by'
   });
 
   record.value = data[0];
@@ -99,8 +113,24 @@ onMounted(async () => {
 
   await pb
     .collection('group_chat_info')
-    .subscribe(chatId, (e: any) => {
-      record.value = e.record;
+    .subscribe(chatId, async function (e: any) {
+      const isMembersChange =
+        JSON.stringify(record.value?.members) ===
+        JSON.stringify(e.record.members);
+
+      record.value = { ...record.value, ...e.record };
+
+      if (isMembersChange) {
+        // fetch expands field
+        const data = await pb.collection('group_chat_info').getFullList({
+          filter: `id~'${chatId}'`,
+          expand: 'members,created_by'
+        });
+
+        if (!record.value?.expand) return;
+
+        record.value.expand = { ...data[0].expand };
+      }
 
       sortedMessages.value = e.record.messages_object.message_list.sort(
         function (a: any, b: any) {
@@ -114,10 +144,6 @@ onMounted(async () => {
       );
     })
     .catch(() => console.log('Error in Chat.vue'));
-
-  // oppositeUser.value = data[0].expand.members.find(
-  //   (user: UserInfo) => user.id !== userStore.userModel.id
-  // );
 });
 
 onBeforeUnmount(async () => {
@@ -147,4 +173,10 @@ onBeforeUnmount(async () => {
     console.log('====================================');
   }
 });
+
+// view group chat info
+const isToggleGroupInfo = ref(false);
+
+const toggleGroupInfo = () =>
+  (isToggleGroupInfo.value = !isToggleGroupInfo.value);
 </script>

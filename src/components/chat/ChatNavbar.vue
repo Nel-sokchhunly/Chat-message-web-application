@@ -12,12 +12,21 @@
         <div class="w-12 h-12 rounded-lg border-2">
           <identicon-svg
             class="block"
-            :username="username"
+            :username="isGroup ? groupId : username"
             saturation="50"
           ></identicon-svg>
         </div>
         <div>{{ username }}</div>
       </div>
+      <div class="flex-1"></div>
+
+      <button
+        v-if="isGroup"
+        class="bg-secondary bg-opacity-40 rounded-full p-2 px-4 text-primary font-bold flex space-x-2 items-center"
+        @click="toggleChatInfo"
+      >
+        <img src="/icon/info.svg" alt="profile" class="h-4" />
+      </button>
     </div>
   </div>
 </template>
@@ -25,13 +34,20 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 
-defineProps({
-  username: String
+const { username, isGroup, groupId, onPressed } = defineProps({
+  username: String,
+  isGroup: Boolean,
+  groupId: String,
+  onPressed: Function
 });
 
 const router = useRouter();
 
 const goBack = () => {
   router.push({ name: 'home' });
+};
+
+const toggleChatInfo = () => {
+  if (isGroup && onPressed) onPressed();
 };
 </script>

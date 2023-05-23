@@ -52,7 +52,7 @@
           <div class="flex-1" />
         </div>
         <h1
-          v-if="!isNextMessageSameSender(index)"
+          v-if="!isNextMessageSameSender(index) && chatType === 'group'"
           class="text-xs text-black text-opacity-50 px-1 mt-1"
         >
           {{ chat.username }}
@@ -86,7 +86,7 @@
           </div>
         </div>
         <h1
-          v-if="!isNextMessageSameSender(index)"
+          v-if="!isNextMessageSameSender(index) && chatType === 'group'"
           class="w-full text-right text-xs text-black text-opacity-50 px-1 mt-1"
         >
           {{ chat.username }}

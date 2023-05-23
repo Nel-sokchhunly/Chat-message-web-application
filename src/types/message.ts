@@ -46,5 +46,6 @@ export interface GroupChatInfo {
   unseen_amount?: number;
   expand?: {
     members: UserInfo[];
+    created_by: UserInfo;
   };
 }
