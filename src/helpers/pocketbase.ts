@@ -1,6 +1,6 @@
 import { initPbClient } from '../pocketbase';
 
-import { DirectChatInfo } from '../types/message';
+import { DirectChatInfo, GroupChatInfo } from '../types/message';
 
 export async function getDirectMessage(fromId: string, toId: string) {
   try {
@@ -47,4 +47,21 @@ export async function getAllDirectMessage(pb: any) {
   });
 
   return result;
+}
+
+export async function createGroupChat(formData: GroupChatInfo) {
+  try {
+    const { pb } = initPbClient();
+
+    const groupChatRecord = await pb
+      .collection('group_chat_info')
+      .create(formData);
+
+    return groupChatRecord;
+  } catch (err) {
+    console.log('====================================');
+    console.log(err);
+    console.log('====================================');
+    return err;
+  }
 }

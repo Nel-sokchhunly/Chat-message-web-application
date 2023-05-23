@@ -15,7 +15,7 @@ type existing_chat = {
 export interface DirectChatInfo {
   id?: string;
   members: string[];
-  type: 'direct' | 'group';
+  type: 'direct';
   messages_object: {
     message_list: MessageObject[];
   };
@@ -31,3 +31,18 @@ export type MessageObject = {
   sender: string;
   text: string;
 };
+
+export interface GroupChatInfo {
+  id?: string;
+  name: string;
+  created_by: string;
+  members: string[];
+  type: 'group';
+  messages_object: {
+    message_list: MessageObject[];
+  };
+  unseen_message: any;
+  expand?: {
+    members: UserInfo[];
+  };
+}

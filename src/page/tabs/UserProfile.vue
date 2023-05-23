@@ -1,1 +1,1 @@
-<template><div>user message</div></template>
+<template><div>user profile</div></template>

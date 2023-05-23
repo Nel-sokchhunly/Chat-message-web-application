@@ -1,7 +1,7 @@
 <template>
   <div
     id="app"
-    class="h-screen w-full flex flex-col flex-grow-1 overflow-hidden relative"
+    class="h-screen w-full flex flex-col flex-grow-1 items-center justify-center overflow-hidden relative"
   >
     <router-view v-if="isLoaded"></router-view>
     <div v-else>

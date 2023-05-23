@@ -17,7 +17,7 @@
 
     <!-- ask for sound notification permission -->
     <div
-      v-if="userStore.$state.isShowNotificationPermission"
+      v-if="globalStore.$state.isShowNotificationPermission"
       class="z-10 fixed bg-white bottom-20 w-fit m-2 text-center rounded-lg overflow-clip"
     >
       <div
@@ -42,6 +42,9 @@
         </button>
       </div>
     </div>
+
+    <!-- create group page -->
+    <CreateGroup />
   </div>
 </template>
 
@@ -59,6 +62,8 @@ import { onBeforeMount } from 'vue';
 import { usePocketBaseStore } from '../store/pocketbase';
 import { useUserStore } from '../store/user';
 import { getAllDirectMessage } from '../helpers/pocketbase';
+import { useGlobalStore } from '../store';
+import CreateGroup from '../components/group/CreateGroup.vue';
 
 const selected = ref<any>(1);
 const options = [
@@ -94,16 +99,17 @@ const options = [
 
 const pb = usePocketBaseStore();
 const userStore = useUserStore();
+const globalStore = useGlobalStore();
 
 let audioObject: HTMLAudioElement;
 
 const closeAcceptSoundNotification = () => {
-  userStore.$state.isShowNotificationPermission = false;
+  globalStore.$state.isShowNotificationPermission = false;
 };
 
 const handleAcceptSoundNotification = () => {
-  userStore.$state.isShowNotificationPermission = false;
-  userStore.$state.isNotificationSoundAllowed = true;
+  globalStore.$state.isShowNotificationPermission = false;
+  globalStore.$state.isNotificationSoundAllowed = true;
 
   audioObject.volume = 0;
   audioObject.play();
@@ -134,7 +140,7 @@ onBeforeMount(async () => {
 
   userStore.$state.directMessage = directMessage;
 
-  userStore.$state.isFetchingFinished = true;
+  globalStore.$state.isFetchingFinished = true;
 
   // subscribe to all direct message
   await pb.pocketbase
@@ -165,7 +171,7 @@ onBeforeMount(async () => {
 
             // check if unseen is the same
             if (currentUnseen < newRecordUnseen) {
-              if (userStore.$state.isNotificationSoundAllowed) {
+              if (globalStore.$state.isNotificationSoundAllowed) {
                 audioObject.play();
               }
 

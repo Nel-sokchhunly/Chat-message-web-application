@@ -1,6 +1,6 @@
 <template>
   <div
-    class="fixed top-0 h-fit w-screen flex flex-col justify-center items-center mb-2"
+    class="fixed top-0 h-fit w-screen flex flex-col justify-center items-center mb-2 z-90"
   >
     <div
       class="h-20 w-screen md:w-1/2 p-2 px-4 pt-4 flex items-center justify-between"
@@ -19,7 +19,7 @@
       <button
         class="bg-secondary bg-opacity-40 rounded-full p-2 px-4 text-primary font-bold flex space-x-2 items-center"
         @click="
-          async () => {
+          () => {
             onchange(4); // 4 is the id for profile component
           }
         "

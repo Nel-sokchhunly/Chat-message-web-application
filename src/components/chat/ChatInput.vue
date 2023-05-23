@@ -2,7 +2,6 @@
   <div class="h-20 fixed bottom-0 w-full flex justify-center items-center">
     <FormKit
       type="form"
-      submit-label="Signup"
       :actions="false"
       @submit="handleSendChat"
       class="flex"

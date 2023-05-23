@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full" v-if="!userStore.isFetchingFinished">
+  <div class="h-full" v-if="!globalStore.isFetchingFinished">
     <Loading />
   </div>
 
@@ -77,9 +77,11 @@ import { useUserStore } from '../../store/user';
 import { usePocketBaseStore } from '../../store/pocketbase';
 import { getAllDirectMessage } from '../../helpers/pocketbase';
 import { useRouter } from 'vue-router';
+import { useGlobalStore } from '../../store';
 
 const router = useRouter();
 const userStore = useUserStore();
+const globalStore = useGlobalStore();
 
 const pb = usePocketBaseStore().pocketbase;
 
@@ -90,7 +92,7 @@ const handleOpenDirectMessage = (chatId: string) => {
 };
 
 onMounted(async () => {
-  if (!userStore.isFetchingFinished) return;
+  if (!globalStore.isFetchingFinished) return;
   const directMessage = await getAllDirectMessage(pb);
 
   userStore.$state.directMessage = directMessage;

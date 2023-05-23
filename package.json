@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
+    "backend": ".\\backend\\pocketbase.exe serve --http=\"10.0.72.70:8090\"",
     "build": "vue-tsc && vite build",
     "preview": "vite preview --host"
   },
