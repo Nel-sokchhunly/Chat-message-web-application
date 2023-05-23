@@ -1,18 +1,18 @@
 <template>
   <div class="flex-1 relative flex justify-center">
-    <Navbar :onchange="(id: Number) => selected = id" />
+    <Navbar :onchange="(id: Number) => globalStore.currentTab = id" />
 
     <div class="h-screen w-screen md:w-1/2 fixed top-20 overflow-hidden">
-      <DirectMessage v-if="selected === 1" />
-      <GroupMessage v-if="selected === 2" />
-      <UserList v-if="selected === 3" />
-      <UserProfile v-if="selected === 4" />
+      <DirectMessage v-if="globalStore.currentTab === 1" />
+      <GroupMessage v-if="globalStore.currentTab === 2" />
+      <UserList v-if="globalStore.currentTab === 3" />
+      <UserProfile v-if="globalStore.currentTab === 4" />
     </div>
 
     <BottomNav
-      :selected="selected"
+      :selected="globalStore.currentTab"
       :options="options"
-      :onchange="(id: Number) => selected = id"
+      :onchange="(id: Number) =>  globalStore.currentTab = id"
     />
 
     <!-- ask for sound notification permission -->
@@ -49,8 +49,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import Navbar from '../layout/Navbar.vue';
 import BottomNav from '../layout/BottomNav.vue';
 
@@ -65,7 +63,10 @@ import { getAllDirectMessage } from '../helpers/pocketbase';
 import { useGlobalStore } from '../store';
 import CreateGroup from '../components/group/CreateGroup.vue';
 
-const selected = ref<any>(1);
+const pb = usePocketBaseStore();
+const userStore = useUserStore();
+const globalStore = useGlobalStore();
+
 const options = [
   {
     id: 1,
@@ -96,10 +97,6 @@ const options = [
   //   textColor: 'text-primary'
   // }
 ];
-
-const pb = usePocketBaseStore();
-const userStore = useUserStore();
-const globalStore = useGlobalStore();
 
 const closeAcceptSoundNotification = () => {
   globalStore.$state.isShowNotificationPermission = false;

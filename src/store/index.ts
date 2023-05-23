@@ -6,7 +6,8 @@ export const useGlobalStore = defineStore('default', {
     isShowNotificationPermission: true,
     isNotificationSoundAllowed: false,
     isFetchingFinished: false,
-    audioObject: null
+    audioObject: null,
+    currentTab: 1
   })
 });
 
@@ -16,4 +17,5 @@ type GlobalStore = {
   isNotificationSoundAllowed: boolean;
   isFetchingFinished: boolean;
   audioObject: any;
+  currentTab: any;
 };
