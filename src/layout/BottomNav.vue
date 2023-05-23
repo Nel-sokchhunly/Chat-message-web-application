@@ -1,6 +1,6 @@
 <template>
   <div
-    class="fixed bottom-0 h-20 bg-white w-screen flex justify-center items-center"
+    class="fixed bottom-0 h-20 bg-white w-screen flex justify-center items-center z-90"
   >
     <div
       class="w-screen md:w-1/2 p-4 flex flex-grow-1 justify-center items-center space-x-4"
@@ -42,6 +42,6 @@ defineProps({
 });
 
 const defaultBtnClass =
-  ' flex items-center space-x-2 px-4 py-2 rounded-full hover:transition-all duration-500 delay-50 ';
-const activeBtnClass = defaultBtnClass + ' flex-1 bg-opacity-60 ';
+  ' flex justify-center items-center space-x-2 px-4 py-2 rounded-full hover:transition-all duration-500 delay-50 ';
+const activeBtnClass = defaultBtnClass + ' flex-1 bg-opacity-60 w-full ';
 </script>
