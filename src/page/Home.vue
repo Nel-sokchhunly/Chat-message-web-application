@@ -58,7 +58,7 @@ import UserList from './tabs/UserList.vue';
 import UserProfile from './tabs/UserProfile.vue';
 import { onBeforeMount } from 'vue';
 import { usePocketBaseStore } from '../store/pocketbase';
-import { useUserStore } from '../store/user';
+import useUserStore from '../store/user';
 import { getAllDirectMessage } from '../helpers/pocketbase';
 import { useGlobalStore } from '../store';
 import CreateGroup from '../components/group/CreateGroup.vue';
@@ -144,7 +144,7 @@ onBeforeMount(async () => {
       console.log('====================================');
       console.log('subscription called ');
       console.log('====================================');
-      if (e.record.members.includes(userStore.userModel.id)) {
+      if (e.record.members.includes(userStore.authStore.model.id)) {
         userStore.$state.directMessage[e.record.id] =
           e.record.messages_object.message_list.sort(function (a: any, b: any) {
             var keyA = new Date(a.created),
@@ -160,9 +160,9 @@ onBeforeMount(async () => {
             userStore.$state.directMessage[index] = e.record;
 
             const currentUnseen =
-              direct.unseen_message[userStore.userModel.id] ?? 0;
+              direct.unseen_message[userStore.authStore.model.id] ?? 0;
             const newRecordUnseen =
-              e.record.unseen_message[userStore.userModel.id] ?? 0;
+              e.record.unseen_message[userStore.authStore.model.id] ?? 0;
 
             // check if unseen is the same
             if (currentUnseen < newRecordUnseen) {

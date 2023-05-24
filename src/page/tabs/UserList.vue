@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed top-4 h-screen w-full px-4 md:w-1/2 py-20 overflow-clip">
+  <div class="h-screen w-full px-4 md:w-1/2 pb-20 overflow-clip z-0">
     <!-- search  -->
     <div
       class="mb-4 p-2 border-2 rounded-lg flex flex-grow items-center space-x-2 focus-within:border-secondary transition-colors"
@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { getDirectMessage } from '../../helpers/pocketbase';
-import { useUserStore } from '../../store/user';
+import useUserStore from '../../store/user';
 import { computed, ref } from '@vue/reactivity';
 import Fuse from 'fuse.js';
 
@@ -72,7 +72,7 @@ const filteredUserList = computed(() => {
 
 const directMessage = async (id: string) => {
   try {
-    const record = await getDirectMessage(userStore.userModel.id, id);
+    const record = await getDirectMessage(userStore.authStore.model.id, id);
 
     router.push({
       path: '/direct/' + record.id

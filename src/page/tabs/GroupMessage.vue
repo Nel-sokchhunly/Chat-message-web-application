@@ -87,7 +87,7 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue';
 import { useGlobalStore } from '../../store';
-import { useUserStore } from '../../store/user';
+import useUserStore from '../../store/user';
 import { getAllGroupMessage } from '../../helpers/pocketbase';
 import { usePocketBaseStore } from '../../store/pocketbase';
 import { useRouter } from 'vue-router';
@@ -120,15 +120,15 @@ onBeforeMount(async () => {
       console.log('====================================');
       console.log('group subscription called');
       console.log('====================================');
-      if (e.record.members.includes(userStore.userModel.id)) {
+      if (e.record.members.includes(userStore.authStore.model.id)) {
         userStore.$state.groupMessage.forEach((group, index) => {
           if (group.id === e.record.id) {
             userStore.$state.groupMessage[index] = e.record;
 
             const currentUnseen =
-              group.unseen_message[userStore.userModel.id] ?? 0;
+              group.unseen_message[userStore.authStore.model.id] ?? 0;
             const newRecordUnseen =
-              e.record.unseen_message[userStore.userModel.id] ?? 0;
+              e.record.unseen_message[userStore.authStore.model.id] ?? 0;
 
             // check if unseen is the same
             if (currentUnseen < newRecordUnseen) {

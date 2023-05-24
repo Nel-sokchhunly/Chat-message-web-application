@@ -159,12 +159,12 @@
               <div class="w-8 h-8 rounded-full">
                 <identicon-svg
                   class="block"
-                  :username="userStore.userModel.username"
+                  :username="userStore.authStore.model.username"
                   saturation="50"
                 ></identicon-svg>
               </div>
               <h1 class="font-medium select-none">
-                {{ userStore.userModel.username }}
+                {{ userStore.authStore.model.username }}
               </h1>
             </div>
           </div>
@@ -189,7 +189,7 @@ import { reactive, ref } from 'vue';
 import Fuse from 'fuse.js';
 
 import { useGlobalStore } from '../../store';
-import { useUserStore } from '../../store/user';
+import useUserStore from '../../store/user';
 import { computed } from '@vue/reactivity';
 import { GroupChatInfo } from '../../types/message';
 import { createGroupChat } from '../../helpers/pocketbase';
@@ -255,7 +255,7 @@ const handleCreateGroup = async () => {
   if (formValues.memberIds.length < 2) return;
 
   // includes self_id
-  formValues.memberIds.push(userStore.userModel.id);
+  formValues.memberIds.push(userStore.authStore.model.id);
 
   // unseen_message
   let unseen_message = Object();
@@ -267,7 +267,7 @@ const handleCreateGroup = async () => {
   const formData: GroupChatInfo = {
     name: formValues.groupName,
     members: formValues.memberIds,
-    created_by: userStore.userModel.id,
+    created_by: userStore.authStore.model.id,
     messages_object: {
       message_list: []
     },

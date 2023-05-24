@@ -73,7 +73,7 @@
 import { onMounted } from 'vue';
 import Loading from '../../components/Loading.vue';
 
-import { useUserStore } from '../../store/user';
+import useUserStore from '../../store/user';
 import { usePocketBaseStore } from '../../store/pocketbase';
 import { getAllDirectMessage } from '../../helpers/pocketbase';
 import { useRouter } from 'vue-router';

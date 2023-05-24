@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!(record && oppositeUser && userStore.userModel)"
+    v-if="!(record && oppositeUser && userStore.authStore.model)"
     class="h-screen flex justify-center items-center"
   >
     <Loading />
@@ -13,7 +13,7 @@
     <div class="fixed bottom-0 h-screen w-screen md:w-1/2 py-20 overflow-clip">
       <ChatMessages
         :chat-type="record.type"
-        :sender-user="userStore.userModel"
+        :sender-user="userStore.authStore.model"
         :receiver-user="(oppositeUser as UserInfo)"
         :messages="(sortedMessages as MessageObject[])"
       />
@@ -27,7 +27,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePocketBaseStore } from '../store/pocketbase';
 
-import { useUserStore } from '../store/user';
+import useUserStore from '../store/user';
 import { DirectChatInfo, MessageObject } from '../types/message';
 import { UserInfo } from '../types/auth';
 
@@ -53,8 +53,8 @@ const onSendChat = async (text: string) => {
     ...record.value.messages_object.message_list,
     {
       text: text,
-      username: userStore.userModel.username,
-      sender: userStore.userModel.id,
+      username: userStore.authStore.model.username,
+      sender: userStore.authStore.model.id,
       created: new Date().toISOString()
     }
   ];
@@ -118,7 +118,7 @@ onMounted(async () => {
     .catch(() => console.log('Error in Chat.vue'));
 
   oppositeUser.value = data[0].expand.members.find(
-    (user: UserInfo) => user.id !== userStore.userModel.id
+    (user: UserInfo) => user.id !== userStore.authStore.model.id
   );
 });
 
@@ -135,7 +135,7 @@ onBeforeUnmount(async () => {
 
     if (!record.value) return;
 
-    const userId = userStore.userModel.id;
+    const userId = userStore.authStore.model.id;
     const updatedUnseenMessage = { ...record.value.unseen_message };
 
     updatedUnseenMessage[userId] = 0;

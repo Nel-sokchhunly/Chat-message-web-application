@@ -1,5 +1,5 @@
 import { initPbClient } from '../pocketbase';
-import { useUserStore } from '../store/user';
+import useUserStore from '../store/user';
 
 import { DirectChatInfo, GroupChatInfo } from '../types/message';
 

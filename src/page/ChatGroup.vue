@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!(record && userStore.userModel)"
+    v-if="!(record && userStore.authStore.model)"
     class="h-screen flex justify-center items-center"
   >
     <Loading />
@@ -18,7 +18,7 @@
       >
         <ChatMessages
           :chat-type="record.type"
-          :sender-user="userStore.userModel"
+          :sender-user="userStore.authStore.model"
           :group-member-obj="record.expand?.members"
           :messages="(sortedMessages as MessageObject[])"
         />
@@ -40,7 +40,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePocketBaseStore } from '../store/pocketbase';
 
-import { useUserStore } from '../store/user';
+import useUserStore from '../store/user';
 import { GroupChatInfo, MessageObject } from '../types/message';
 
 import Loading from '../components/Loading.vue';
@@ -66,8 +66,8 @@ const onSendChat = async (text: string) => {
     ...record.value.messages_object.message_list,
     {
       text: text,
-      username: userStore.userModel.username,
-      sender: userStore.userModel.id,
+      username: userStore.authStore.model.username,
+      sender: userStore.authStore.model.id,
       created: new Date().toISOString()
     }
   ];
@@ -76,7 +76,7 @@ const onSendChat = async (text: string) => {
     ...record.value.unseen_message
   };
   Object.keys(record.value.unseen_message).forEach((id) => {
-    if (id === userStore.userModel.id) return;
+    if (id === userStore.authStore.model.id) return;
 
     const amount = unseen_message[id];
 
@@ -159,7 +159,7 @@ onBeforeUnmount(async () => {
 
     if (!record.value) return;
 
-    const userId = userStore.userModel.id;
+    const userId = userStore.authStore.model.id;
     const updatedUnseenMessage = { ...record.value.unseen_message };
 
     updatedUnseenMessage[userId] = 0;

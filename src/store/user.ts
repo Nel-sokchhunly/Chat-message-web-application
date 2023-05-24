@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { DirectChatInfo, GroupChatInfo } from '../types/message';
 import { UserInfo } from '../types/auth';
 
-export const useUserStore = defineStore('user', {
+const useUserStore = defineStore('user', {
   state: (): UserStoreState => ({
     authStore: null,
     usersList: [],
@@ -10,7 +10,6 @@ export const useUserStore = defineStore('user', {
     groupMessage: []
   }),
   getters: {
-    userModel: (state) => state.authStore.model,
     allDirectMessageUser: (state) => {
       const selfId = state.authStore.model.id;
       const directMessages: any = {
@@ -73,3 +72,5 @@ interface UserStoreState {
   directMessage: DirectChatInfo[];
   groupMessage: GroupChatInfo[];
 }
+
+export default useUserStore;

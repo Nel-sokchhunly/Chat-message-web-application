@@ -1,5 +1,5 @@
 import PocketBase from 'pocketbase';
-import { useUserStore } from '../store/user';
+import useUserStore from '../store/user';
 import { usePocketBaseStore } from '../store/pocketbase';
 
 export default async function initPocketBase() {

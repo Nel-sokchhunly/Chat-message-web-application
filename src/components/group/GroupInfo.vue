@@ -1,7 +1,7 @@
 <template>
   <div
     :class="{
-      'h-screen w-screen z-[999999] fixed top-0 overflow-scroll transition-transform transform duration-500 flex flex-col items-center bg-white delay-500': true,
+      'h-screen w-screen z-[999999] fixed top-0 overflow-scroll transition-transform transform duration-500 flex flex-col items-center bg-white': true,
       'translate-x-0': isShowing,
       'translate-x-full': !isShowing
     }"
@@ -185,7 +185,7 @@
               Cancel
             </button>
             <button
-              v-if="userStore.userModel.id === chatRecord.created_by"
+              v-if="userStore.authStore.model.id === chatRecord.created_by"
               type="submit"
               class="p-4 bg-secondary flex-1 rounded-lg font-bold"
             >
@@ -202,7 +202,7 @@
 import { reactive, ref, onBeforeMount, computed } from 'vue';
 import { GroupChatInfo } from '../../types/message';
 import Fuse from 'fuse.js';
-import { useUserStore } from '../../store/user';
+import useUserStore from '../../store/user';
 import { UserInfo } from '../../types/auth';
 import { usePocketBaseStore } from '../../store/pocketbase';
 

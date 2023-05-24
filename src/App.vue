@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import initPocketBase from './pocketbase';
-import { useUserStore } from './store/user';
+import useUserStore from './store/user';
 import { useRouter } from 'vue-router';
 
 import Loading from './components/Loading.vue';

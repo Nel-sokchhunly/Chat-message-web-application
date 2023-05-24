@@ -25,14 +25,8 @@
         label="Email"
         v-model="email"
         placeholder="enter your kit email"
-        :validation="[
-          ['required']
-          // ['matches', /^[A-Za-z0-9._%+-]+@kit\.edu\.kh$/]
-        ]"
+        validation="required"
         validation-visibility="blur"
-        :validation-messages="{
-          matches: 'email must be KIT email'
-        }"
         :classes="{
           outer: 'mb-5 w-[300px]',
           label: 'block mb-1 font-bold text-sm',
@@ -78,8 +72,8 @@
         >
           Login
         </div>
-        <span v-else
-          ><div
+        <span v-else>
+          <div
             type="button"
             class="w-full inline-flex justify-center items-center px-8 py-4 font-bold leading-6 rounded-md text-gray-900 bg-opacity-50 bg-primary hover:bg-alt-primary transition ease-in-out duration-150 cursor-not-allowed"
             disabled
@@ -106,8 +100,8 @@
             </svg>
 
             Loading...
-          </div></span
-        >
+          </div>
+        </span>
       </button>
 
       <!-- error message -->
@@ -137,10 +131,7 @@
         label="Email"
         v-model="email"
         placeholder="enter your kit email"
-        :validation="[
-          ['required']
-          // ['matches', /^[A-Za-z0-9._%+-]+@kit\.edu\.kh$/]
-        ]"
+        validation="required|matches:/^[A-Za-z0-9._%+-]+@kit\.edu\.kh$/"
         validation-visibility="blur"
         :validation-messages="{
           matches: 'email must be KIT email'
@@ -210,8 +201,8 @@
         >
           Signup
         </div>
-        <span v-else
-          ><div
+        <span v-else>
+          <div
             type="button"
             class="w-full inline-flex justify-center items-center px-8 py-4 font-bold leading-6 rounded-md text-gray-900 bg-opacity-50 bg-primary hover:bg-alt-primary transition ease-in-out duration-150 cursor-not-allowed"
             disabled
@@ -238,8 +229,8 @@
             </svg>
 
             Loading...
-          </div></span
-        >
+          </div>
+        </span>
       </button>
 
       <!-- error message -->
