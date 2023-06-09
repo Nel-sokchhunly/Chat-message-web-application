@@ -54,6 +54,8 @@ const useUserStore = defineStore('user', {
       state.groupMessage.forEach((chat) => {
         let unseenAmount = chat.unseen_message[selfId] ?? 0;
 
+        chat.unseen_amount = unseenAmount;
+
         if (unseenAmount > 0) {
           groupMessage.unseen.push(chat);
         } else {
