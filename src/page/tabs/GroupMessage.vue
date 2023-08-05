@@ -19,7 +19,7 @@
     </div>
 
     <!-- group section -->
-    <div>
+    <div v-if="!userStore.isGroupMessagesEmpty">
       <!-- unseen section -->
       <div
         v-if="userStore.allGroupMessage.unseen.length > 0"
@@ -80,6 +80,15 @@
           </h1>
         </button>
       </div>
+    </div>
+
+    <!-- empty state -->
+    <div
+      v-else
+      class="flex flex-col items-center justify-center flex-1 text-black text-opacity-50"
+    >
+      <h1 class="text-xl mb-4">No group message</h1>
+      <h1 class="text-sm">Start a conversation with someone</h1>
     </div>
   </div>
 </template>

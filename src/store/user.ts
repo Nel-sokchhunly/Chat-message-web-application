@@ -64,6 +64,12 @@ const useUserStore = defineStore('user', {
       });
 
       return groupMessage;
+    },
+    isDirectMessagesEmpty: (state) => {
+      return state.directMessage.length === 0;
+    },
+    isGroupMessagesEmpty: (state) => {
+      return state.groupMessage.length === 0;
     }
   }
 });

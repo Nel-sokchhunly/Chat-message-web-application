@@ -131,7 +131,7 @@
         label="Email"
         v-model="email"
         placeholder="enter your kit email"
-        validation="required|matches:/^[A-Za-z0-9._%+-]+@kit\.edu\.kh$/"
+        validation="required"
         validation-visibility="blur"
         :validation-messages="{
           matches: 'email must be KIT email'

@@ -2,7 +2,9 @@
   <div class="flex-1 relative flex justify-center">
     <Navbar :onchange="(id: Number) => globalStore.currentTab = id" />
 
-    <div class="h-screen w-screen md:w-1/2 fixed top-20 overflow-hidden">
+    <div
+      class="h-screen w-screen md:w-1/2 fixed top-20 overflow-hidden flex flex-grow"
+    >
       <DirectMessage v-if="globalStore.currentTab === 1" />
       <GroupMessage v-if="globalStore.currentTab === 2" />
       <UserList v-if="globalStore.currentTab === 3" />
@@ -134,6 +136,10 @@ onBeforeMount(async () => {
   const directMessage = await getAllDirectMessage(pb.pocketbase);
 
   userStore.$state.directMessage = directMessage;
+
+  console.log('====================================');
+  console.log('directMessage', directMessage);
+  console.log('====================================');
 
   globalStore.$state.isFetchingFinished = true;
 

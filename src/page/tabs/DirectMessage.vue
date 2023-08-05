@@ -3,7 +3,10 @@
     <Loading />
   </div>
 
-  <div v-else class="px-4 h-screen w-full flex flex-col overflow-scroll pb-56">
+  <div
+    v-else-if="!userStore.isDirectMessagesEmpty"
+    class="px-4 h-screen w-full flex flex-col overflow-scroll pb-56"
+  >
     <div>
       <!-- unseen section -->
       <div
@@ -66,6 +69,14 @@
         </h1>
       </button>
     </div>
+  </div>
+
+  <div
+    v-else
+    class="flex flex-col items-center h-full w-full text-black text-opacity-50"
+  >
+    <h1 class="text-xl mb-4">No message</h1>
+    <h1 class="text-sm">Start a conversation with someone</h1>
   </div>
 </template>
 

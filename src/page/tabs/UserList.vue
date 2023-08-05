@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen w-full px-4 md:w-1/2 pb-20 overflow-clip z-0">
+  <div class="h-screen w-full flex-1 px-4 md:w-1/2 pb-20 overflow-clip z-0">
     <!-- search  -->
     <div
       class="mb-4 p-2 border-2 rounded-lg flex flex-grow items-center space-x-2 focus-within:border-secondary transition-colors"
